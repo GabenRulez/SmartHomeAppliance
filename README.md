@@ -45,6 +45,9 @@ ___
  - 6-pin USB-C port
 ![](/media/photos/USB-C_01.jpg)
 
+ - some capacitors
+![](/media/photos/CapacitorA_01.jpg)
+
 ___
 
 ### Drivers
