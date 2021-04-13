@@ -4,6 +4,19 @@
 
 ___
 
+#### 2021 03 25
+
+I decided on the parts that I'm gonna use in this project. I documented them in the `README.md` in the main folder of this repository.
+
+___
+
+#### 2021 04 08
+
+I downloaded libraries, that I plan on using with this project.
+I created a simple sketch with Adafruit library to test the display.
+
+___
+
 #### 2021 04 11
 
 As the screen was already working correctly, I decided to make next step and connect the rotary encoder.
