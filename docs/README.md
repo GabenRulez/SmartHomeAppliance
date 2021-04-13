@@ -22,6 +22,8 @@ ___
 As the screen was already working correctly, I decided to make next step and connect the rotary encoder.
 I used jumper cables. I placed the encoder quite far from the board itself (near the display, at the top of the breadboards).
 
+![](/media/photos/CircuitState_02.jpg)
+
 I turned the appropriate pins in Arduino IDE, compiled and uploaded the sketch.
 
 I encountered a weird "bug"(?) - when my hand was close (but not touching) the cables, the whole ESP32 crashed repeatedly.
@@ -55,6 +57,10 @@ I had to utilize FreeRTOS tasks, as Arduino itself doesn't have any schedulers.
 6. Then it enters critical section (`taskENTER_CRITICAL(mutex)`) so that it's not interrupted while working, updates `rotaryEncoderValue` accordingly and exits the critical section.  
 
 After some testing and calibrating the `debounceTime`, the rotary encoder worked much better.
+
+P.S I also replaced the jumper cables with some thicker gauge wire. It's much cleaner now.
+
+![](/media/photos/CircuitState_03.jpg)
 
 ___
 
