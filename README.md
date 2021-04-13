@@ -4,6 +4,8 @@ This project is about creating a multi-purpose Smart Lamp, that's meant to sit o
 
 
 ###### This Smart Home Appliance project is partly a project task for AGH Embedded Systems Course (pl.: "Systemy Wbudowane").
+
+##### Work logs: [link](https://github.com/GabenRulez/SmartHomeAppliance/blob/main/docs/README.md) 
 ___
 
 ### Functions & premises:
