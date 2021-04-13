@@ -44,17 +44,17 @@ void initializeRotaryEncoderInterrupt();
 void rotaryEncoderInterrupt();
 void rotaryEncoderInterruptInISR(void *pvParameter1, uint32_t ulParameter2);
 void rotaryEncoderDebouncedHandler(void *pinBState);
-
+void screenManagerTask(void *parameters);
 void initializeScreenManagerTask();
-void initializeMutex();
+void initializeSemaphore();
 
-SemaphoreHandle_t mutex_v = NULL;
+SemaphoreHandle_t semaphore_v = NULL;
 
 void setup() {
   Serial.begin(115200);
   initializeScreen();
   initializeDisplay();
-  initializeMutex();
+  initializeSemaphore();
   initializeRandomSeed();
   initializeRotaryEncoder();
   initializeRotaryEncoderInterrupt();
@@ -80,6 +80,7 @@ void initializeScreen(){
   displayCore = xPortGetCoreID();
 }
 
+
 void initializeDisplay(){
   display.setTextColor(SSD1306_WHITE);
   display.setTextSize(1);
@@ -92,19 +93,23 @@ void initializeDisplay(){
   /*display.cp437(true);*/
 }
 
+
 void initializeRandomSeed(){
   randomSeed(analogRead(DISCONNECTED_PIN));
 }
 
+
 void initializeRotaryEncoder(){
-  pinMode(ROTARY_ENCODER_BUTTON_PIN, INPUT_PULLDOWN);
-  pinMode(ROTARY_ENCODER_PIN_A,   INPUT_PULLDOWN);
-  pinMode(ROTARY_ENCODER_PIN_B,  INPUT_PULLDOWN);
+  pinMode(ROTARY_ENCODER_BUTTON_PIN,  INPUT_PULLDOWN);
+  pinMode(ROTARY_ENCODER_PIN_A,       INPUT_PULLDOWN);
+  pinMode(ROTARY_ENCODER_PIN_B,       INPUT_PULLDOWN);
 }
+
 
 void initializeRotaryEncoderInterrupt(){
   attachInterrupt(ROTARY_ENCODER_PIN_A, rotaryEncoderInterrupt, RISING);
 }
+
 
 void rotaryEncoderInterrupt(){
   int pinBState = digitalRead(ROTARY_ENCODER_PIN_B);
@@ -115,6 +120,7 @@ void rotaryEncoderInterrupt(){
   portYIELD_FROM_ISR();
 }
 
+
 void rotaryEncoderInterruptInISR(void *pvParameter1, uint32_t ulParameter2) {
   BaseType_t xInterfaceToService = (BaseType_t) ulParameter2;
   
@@ -124,16 +130,17 @@ void rotaryEncoderInterruptInISR(void *pvParameter1, uint32_t ulParameter2) {
   xTaskCreatePinnedToCore( rotaryEncoderDebouncedHandler, "debouncedTask", 1000, (void*) pinBState, 1, &rotaryEncoderInterruptTaskHandle, 0 );
 }
 
+
 void rotaryEncoderDebouncedHandler(void *pinBState){
   vTaskDelay(rotaryEncoderDebounceTime);
 
   portMUX_TYPE mutexStop = portMUX_INITIALIZER_UNLOCKED;
   taskENTER_CRITICAL(&mutexStop); // It's here to stop this task from being deleted, while the other semaphore is taken.
 
-  if (xSemaphoreTake(mutex_v, (TickType_t) 1000) == pdTRUE){
+  if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
     if((int)pinBState == LOW) rotaryEncoderValue++;
     else rotaryEncoderValue--;
-    xSemaphoreGive(mutex_v);
+    xSemaphoreGive(semaphore_v);
    }
 
   taskEXIT_CRITICAL(&mutexStop);
@@ -142,14 +149,20 @@ void rotaryEncoderDebouncedHandler(void *pinBState){
   vTaskDelete(NULL);
 }
 
+
+void initializeScreenManagerTask(){
+  xTaskCreatePinnedToCore( screenManagerTask, "screenManagerTask", 1000, (void*) NULL, 2, NULL, displayCore );
+}
+
+
 void screenManagerTask(void *parameters){
   portTickType screenUpdateTick = xTaskGetTickCount();
   int frameTime = 1000 / FPS;
 
   while(true){
-    if (xSemaphoreTake(mutex_v, (TickType_t) 1000) == pdTRUE){
+    if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
       int gotValue = rotaryEncoderValue;
-      xSemaphoreGive(mutex_v);
+      xSemaphoreGive(semaphore_v);
       display.clearDisplay();
       display.setCursor(0,0);
       display.println(gotValue);
@@ -160,15 +173,13 @@ void screenManagerTask(void *parameters){
   vTaskDelete(NULL);
 }
 
-void initializeScreenManagerTask(){
-  xTaskCreatePinnedToCore( screenManagerTask, "screenManagerTask", 1000, (void*) NULL, 2, NULL, displayCore );
+
+void initializeSemaphore(){
+  semaphore_v = xSemaphoreCreateBinary();
+  if( semaphore_v != NULL) xSemaphoreGive(semaphore_v);
+  else sendErrorToSerial("Failed semaphore initialize");
 }
 
-void initializeMutex(){
-  mutex_v = xSemaphoreCreateBinary();
-  if( mutex_v != NULL) xSemaphoreGive(mutex_v);
-  else sendErrorToSerial("Failed mutex initialize");
-}
 
 void sendErrorToSerial(String message){
   for(;;){
