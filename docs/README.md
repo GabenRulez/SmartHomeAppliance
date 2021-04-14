@@ -22,7 +22,7 @@ ___
 As the screen was already working correctly, I decided to make next step and connect the rotary encoder.
 I used jumper cables. I placed the encoder quite far from the board itself (near the display, at the top of the breadboards).
 
-![](/media/photos/CircuitState_02.jpg)
+![](/media/photos/workLog/CircuitState_02.jpg)
 
 I turned the appropriate pins in Arduino IDE, compiled and uploaded the sketch.
 
@@ -60,7 +60,7 @@ After some testing and calibrating the `debounceTime`, the rotary encoder worked
 
 P.S I also replaced the jumper cables with some thicker gauge wire. It's much cleaner now.
 
-![](/media/photos/CircuitState_03.jpg)
+![](/media/photos/workLog/CircuitState_03.jpg)
 
 ___
 
@@ -82,6 +82,30 @@ I switched to `xSemaphoreCreateBinary` instead.
 
 Later I decided to put all the rotary encoder code into one proprietary `C++` class. It took me some time, but then it turned out, that the functions I used with interrupts have to operate on the public variables and static functions, so I couldn't enclose it completely. 
 As I didn't want to split the code into "some into the class, some not" I foregone this idea.
+
+___
+
+#### 2021 04 14
+
+I wanted to finally attach white 12V LEDs to the board.
+
+I took out the step-up boost converter, inserted gold-pins, put it in separate breadboard and soldered the pins. Then I connected the boost converter to 5V DC phone charger and measured the voltage across the `VOUT+` and `VOUT-` pins.
+
+The voltage behaved very weirdly. It started at 5V. Then after ~5 seconds it went up to 10V, so I calibrated it to 12V. Then after ~30 seconds the voltage started going up. It went up and up and up. The biggest voltage I saw was 38V (According to the circuit documentation that's not even possible)!
+
+I had a thought, that maybe it's because there is no connected load, so some capacitor isn't discharging. 
+
+I connected a small strip of white 12V LEDs to the output and measured the voltage. They turned on after ~5 seconds, then they were sitting at ~11V for about 2 minutes. Then suddenly the voltage spiked to 23V, the LEDs started smoking, so I immediately turned them off, but I couldn't turn them on any longer.
+
+![](/media/photos/workLog/smokedLEDs.jpg)
+
+The culprit:
+
+![](/media/photos/workLog/brokenBoostConverter.jpg)
+
+I then went ahead and repeated the whole process (luckily I had 5 of them ordered at the same time). The new one worked correctly :)
+
+![](/media/photos/workLog/newBoostConverterWorking.jpg)
 
 ___
 
