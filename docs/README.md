@@ -109,4 +109,38 @@ I then went ahead and repeated the whole process (luckily I had 5 of them ordere
 
 ___
 
+#### 2021 04 15
+
+I somehow forgot about the button inside the rotary encoder, thus I decided to come back to it and make it work.
+
+![](/media/photos/workLog/CircuitState_04.jpg)
+
+I created a simple function and attached it as an interrupt (`RISING`) to the button pin. This function simply outputed "ButtonPressed" on the serial monitor.
+
+When I pushed down the button the interrupt triggered once (as it should) or sometimes twice, but when I let go off the button then the interrupt triggered some more times.
+
+My "Embedded Systems" course professor proposed to change the ESP32 internal pull-up resistors for some external ones, of lower resistance (~30kΩ -> 1kΩ). This resulted in much better looking wave (I connected the outputs to the oscilloscope earlier) and the triggered interrupts followed.
+
+Now I was at a point, where:
+
+- pressing down triggered once, and only once
+- pressing up (letting go) didn't triggered, or triggered just once
+
+I decided to try out something different. ESP32 is very powerful chipset, so I don't really have to mind using more CPU intensive ways.
+
+I creating polling function, instead of an interrupt-based one. To get rid of this small little `down-up-down` signal when letting go of the button, my function:
+
+- reads the digital value of button pin
+  - if it's state is `HIGH` :
+    - waits for few miliseconds
+    - reads the digital value again
+  - if it's state is `LOW`:
+    - does nothing and just waits for the next loop
+
+Doing it like this eliminates any possibility of wrongly reading few nanoseconds long `HIGH` pulses. It creates some load on the CPU, but as I said - it's not as much, as to make it matter here.
+
+So now I have a variable, which states in which state is the button, that is updated `FPS` times per second (it's set up as 60 for now; I'll create it own variable later). If value changes from `0` to `1`, then I know the button was pressed.
+
+___
+
 <div id="bottom"></div>

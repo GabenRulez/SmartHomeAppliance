@@ -27,12 +27,14 @@ int displayCore =         0;       // Overwritten later. It's the core, on which
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 /*  ROTARY ENCODER  */
-#define ROTARY_ENCODER_BUTTON_PIN   19
-#define ROTARY_ENCODER_PIN_A        18
-#define ROTARY_ENCODER_PIN_B        5
+#define ROTARY_ENCODER_PIN_A                18
+#define ROTARY_ENCODER_PIN_B                5
+#define ROTARY_ENCODER_BUTTON_PIN           19
+#define ROTARY_ENCODER_BUTTON_POLLING_RATE  60
 TaskHandle_t rotaryEncoderInterruptTaskHandle = NULL;
 const int rotaryEncoderDebounceTime = 33;
 int rotaryEncoderValue = 0;
+boolean rotaryEncoderButtonPressed = false;
 
 void sendErrorToSerial(String message);
 
@@ -50,6 +52,38 @@ void initializeSemaphore();
 
 SemaphoreHandle_t semaphore_v = NULL;
 
+void rotaryEncoderButtonInterrupt( void * par ){
+
+  portTickType pollingUpdateTick = xTaskGetTickCount();
+  int frameTime = 1000 / ROTARY_ENCODER_BUTTON_POLLING_RATE;
+  boolean oldState = false;
+  boolean newState;
+  
+  if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
+    oldState = rotaryEncoderButtonPressed;
+    xSemaphoreGive(semaphore_v);
+  }
+  
+  while(true){
+    newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
+    if(newState == HIGH && oldState == false){
+      vTaskDelay(frameTime/2);
+      newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
+    }
+    if(newState != oldState){
+      if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
+        rotaryEncoderButtonPressed = newState;
+        xSemaphoreGive(semaphore_v);
+        oldState = newState;
+        if(newState) Serial.println("ButtonPressed");
+        else Serial.println("ButtonReleased");
+      }
+    }
+    vTaskDelayUntil( &pollingUpdateTick, frameTime);
+  }
+  vTaskDelete(NULL);
+}
+
 void setup() {
   Serial.begin(115200);
   initializeScreen();
@@ -60,6 +94,8 @@ void setup() {
   initializeRotaryEncoderInterrupt();
   
   initializeScreenManagerTask();
+
+  xTaskCreatePinnedToCore( rotaryEncoderButtonInterrupt, "rotaryEncoderButtonInterrupt", 2000, (void*) NULL, 1, NULL,0 );
 }
 
 
