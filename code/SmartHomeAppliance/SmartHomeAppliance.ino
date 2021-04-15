@@ -177,8 +177,6 @@ void rotaryEncoderButtonInterrupt( void * parameters ){
         rotaryEncoderButtonPressed = newState;
         xSemaphoreGive(rotaryEncoderSemaphore);
         oldState = newState;
-        if(newState) Serial.println("ButtonPressed");
-        else Serial.println("ButtonReleased");
       }
     }
     vTaskDelayUntil( &pollingUpdateTick, frameTime);
