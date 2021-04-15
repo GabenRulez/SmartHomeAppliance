@@ -23,7 +23,7 @@ This is a main file of our project for Embedded Systems course in AGH Kraków.
 #define WHITE             SSD1306_WHITE
 #define BLACK             SSD1306_BLACK
 #define FPS               60
-int displayCore =         0;       // Overwritten later. It's the core, on which the I^2C communication will take place on.
+int displayCore         = 0;       // Overwritten later. It's the core, on which the I^2C communication will take place on.
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 /*  ROTARY ENCODER  */
@@ -31,13 +31,15 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define ROTARY_ENCODER_PIN_B                5
 #define ROTARY_ENCODER_BUTTON_PIN           19
 #define ROTARY_ENCODER_BUTTON_POLLING_RATE  60
-TaskHandle_t rotaryEncoderInterruptTaskHandle = NULL;
-const int rotaryEncoderDebounceTime = 33;
-int rotaryEncoderValue = 0;
-boolean rotaryEncoderButtonPressed = false;
+TaskHandle_t      rotaryEncoderInterruptTaskHandle  = NULL;
+const int         rotaryEncoderDebounceTime         = 33;
+int               rotaryEncoderValue                = 0;
+boolean           rotaryEncoderButtonPressed        = false;
+SemaphoreHandle_t rotaryEncoderSemaphore            = NULL;
+
+
 
 void sendErrorToSerial(String message);
-
 void initializeScreen();
 void initializeDisplay();
 void initializeRandomSeed();
@@ -46,56 +48,21 @@ void initializeRotaryEncoderInterrupt();
 void rotaryEncoderInterrupt();
 void rotaryEncoderInterruptInISR(void *pvParameter1, uint32_t ulParameter2);
 void rotaryEncoderDebouncedHandler(void *pinBState);
+void rotaryEncoderButtonInterrupt( void * parameters );
 void screenManagerTask(void *parameters);
 void initializeScreenManagerTask();
-void initializeSemaphore();
-
-SemaphoreHandle_t semaphore_v = NULL;
-
-void rotaryEncoderButtonInterrupt( void * par ){
-
-  portTickType pollingUpdateTick = xTaskGetTickCount();
-  int frameTime = 1000 / ROTARY_ENCODER_BUTTON_POLLING_RATE;
-  boolean oldState = false;
-  boolean newState;
-  
-  if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
-    oldState = rotaryEncoderButtonPressed;
-    xSemaphoreGive(semaphore_v);
-  }
-  
-  while(true){
-    newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
-    if(newState == HIGH && oldState == false){
-      vTaskDelay(frameTime/2);
-      newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
-    }
-    if(newState != oldState){
-      if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
-        rotaryEncoderButtonPressed = newState;
-        xSemaphoreGive(semaphore_v);
-        oldState = newState;
-        if(newState) Serial.println("ButtonPressed");
-        else Serial.println("ButtonReleased");
-      }
-    }
-    vTaskDelayUntil( &pollingUpdateTick, frameTime);
-  }
-  vTaskDelete(NULL);
-}
+SemaphoreHandle_t initializeSemaphore();
 
 void setup() {
   Serial.begin(115200);
   initializeScreen();
   initializeDisplay();
-  initializeSemaphore();
   initializeRandomSeed();
   initializeRotaryEncoder();
   initializeRotaryEncoderInterrupt();
-  
   initializeScreenManagerTask();
 
-  xTaskCreatePinnedToCore( rotaryEncoderButtonInterrupt, "rotaryEncoderButtonInterrupt", 2000, (void*) NULL, 1, NULL,0 );
+  xTaskCreatePinnedToCore( rotaryEncoderButtonInterrupt, "rotaryEncoderButtonInterrupt", 3000, (void*) NULL, 1, NULL,0 );
 }
 
 
@@ -139,6 +106,7 @@ void initializeRotaryEncoder(){
   pinMode(ROTARY_ENCODER_BUTTON_PIN,  INPUT_PULLDOWN);
   pinMode(ROTARY_ENCODER_PIN_A,       INPUT_PULLDOWN);
   pinMode(ROTARY_ENCODER_PIN_B,       INPUT_PULLDOWN);
+  rotaryEncoderSemaphore = initializeSemaphore();
 }
 
 
@@ -173,15 +141,48 @@ void rotaryEncoderDebouncedHandler(void *pinBState){
   portMUX_TYPE mutexStop = portMUX_INITIALIZER_UNLOCKED;
   taskENTER_CRITICAL(&mutexStop); // It's here to stop this task from being deleted, while the other semaphore is taken.
 
-  if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
+  if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE){
     if((int)pinBState == LOW) rotaryEncoderValue++;
     else rotaryEncoderValue--;
-    xSemaphoreGive(semaphore_v);
+    xSemaphoreGive(rotaryEncoderSemaphore);
    }
 
   taskEXIT_CRITICAL(&mutexStop);
   
   rotaryEncoderInterruptTaskHandle = NULL;
+  vTaskDelete(NULL);
+}
+
+
+void rotaryEncoderButtonInterrupt( void * parameters ){
+
+  portTickType pollingUpdateTick = xTaskGetTickCount();
+  int frameTime = 1000 / ROTARY_ENCODER_BUTTON_POLLING_RATE;
+  boolean oldState = false;
+  boolean newState;
+  
+  if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE){
+    oldState = rotaryEncoderButtonPressed;
+    xSemaphoreGive(rotaryEncoderSemaphore);
+  }
+  
+  while(true){
+    newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
+    if(newState == HIGH && oldState == false){
+      vTaskDelay(frameTime/2);
+      newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
+    }
+    if(newState != oldState){
+      if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE){
+        rotaryEncoderButtonPressed = newState;
+        xSemaphoreGive(rotaryEncoderSemaphore);
+        oldState = newState;
+        if(newState) Serial.println("ButtonPressed");
+        else Serial.println("ButtonReleased");
+      }
+    }
+    vTaskDelayUntil( &pollingUpdateTick, frameTime);
+  }
   vTaskDelete(NULL);
 }
 
@@ -196,12 +197,14 @@ void screenManagerTask(void *parameters){
   int frameTime = 1000 / FPS;
 
   while(true){
-    if (xSemaphoreTake(semaphore_v, (TickType_t) 1000) == pdTRUE){
+    if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE){
       int gotValue = rotaryEncoderValue;
-      xSemaphoreGive(semaphore_v);
+      boolean buttonPressed = rotaryEncoderButtonPressed;
+      xSemaphoreGive(rotaryEncoderSemaphore);
       display.clearDisplay();
       display.setCursor(0,0);
       display.println(gotValue);
+      if(buttonPressed) display.fillCircle(display.width()/2, display.height()/2, 4, WHITE);
       display.display();
     }
     vTaskDelayUntil( &screenUpdateTick, frameTime);
@@ -210,10 +213,11 @@ void screenManagerTask(void *parameters){
 }
 
 
-void initializeSemaphore(){
-  semaphore_v = xSemaphoreCreateBinary();
-  if( semaphore_v != NULL) xSemaphoreGive(semaphore_v);
-  else sendErrorToSerial("Failed semaphore initialize");
+SemaphoreHandle_t initializeSemaphore(){
+  SemaphoreHandle_t tempSemaphore = xSemaphoreCreateBinary();
+  if( tempSemaphore != NULL) xSemaphoreGive(tempSemaphore);
+  else sendErrorToSerial("Failed initializing semaphore!");
+  return tempSemaphore;
 }
 
 
