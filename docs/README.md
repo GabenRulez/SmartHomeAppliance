@@ -143,4 +143,16 @@ So now I have a variable, which states in which state is the button, that is upd
 
 ___
 
+#### 2021 04 17
+
+I tried to change the way I use ESP-IDF. Till now I was using Arduino IDE with ESP32 extension, but there's a way to work with just ESP-IDF.
+
+I installed Visual Studio Code, installed PlatformIO and then tried to create a new project, but I couldn't.
+
+ESP-IDF forbids any spaces (" ") in the path of your OS installation. Unfortunately, mine has one, and it's impossible to change it, unless I reinstall Windows 10. I can't really do that right now, so I have to forfeit that idea.
+
+Instead I reformatted my code in ArduinoIDE, created additional `config.h` and `secretConfig.h` files, as well as some `.ino` files - each for some part of the project, e.g. `rotaryEncoder.ino` and `OLEDScreen.ino`.
+
+___
+
 <div id="bottom"></div>
