@@ -19,3 +19,8 @@ void rotaryEncoderInterruptInISR(void *pvParameter1, uint32_t ulParameter2);
 void rotaryEncoderDebouncedHandler(void *pinBState);
 void startRotaryEncoderButtonTask();
 void rotaryEncoderButtonTask( void * parameters );
+
+
+/* WIFI SERVER */
+void initializeServer();
+void startServer();

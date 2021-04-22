@@ -8,5 +8,9 @@ Additional code is in multiple .ino files in the same directory.
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+
 #include "config.h"
 #include "secretConfig.h"

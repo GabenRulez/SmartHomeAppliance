@@ -32,4 +32,8 @@ boolean           rotaryEncoderButtonPressed        = false;
 SemaphoreHandle_t rotaryEncoderSemaphore            = NULL;
 
 
+/* WIFI SERVER */
+#define SERVER_PORT       80            // default port for HTTP, so you don't have to specify port in the browser
+
+
 #endif
