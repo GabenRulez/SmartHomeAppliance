@@ -155,4 +155,16 @@ Instead I reformatted my code in ArduinoIDE, created additional `config.h` and `
 
 ___
 
+#### 2021 04 21
+
+I downloaded few libraries: `ESPAsyncWebServer` and `AsyncTCP`, that allow to create asynchronous web server. 
+
+I also imported `<WiFi.h>` to the ArduinoIDE project.
+
+I decided upon the WiFi working mode - `Station + AP`. It basically allows the ESP32 to be connected to the web, as well as create its own local network (Access Point), through which you can change the lamp options. 
+
+During testing I found out, that I can't really connect it as `Station`  to the hotspot that is created by my laptop. I would need a proper router for that. So for now I will omit the `Station` connection and just work on `AP` part.
+
+___
+
 <div id="bottom"></div>
