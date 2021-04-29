@@ -26,6 +26,7 @@ void rotaryEncoderButtonTask( void * parameters );
 void initializeAccessPoint();
 void initializeAliveMessages();
 void initializeMainPage();
+void initializeModeSelectors();
 void startServer();
 void startStationTask();
 void stationTask(void * parameters);
@@ -40,3 +41,5 @@ enum programMode{
   modeWarmLights = 1,
   modeRGB = 2
 };
+programMode currentProgramMode;
+int modeWarmLightsStrength = 50;

@@ -28,17 +28,37 @@ void screenManagerTask(void *parameters){
   portTickType screenUpdateTick = xTaskGetTickCount();
   int frameTime = 1000 / FPS;
 
+  programMode savedProgramMode = modeOFF;
   while(true){
-    if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE){
-      int gotValue = rotaryEncoderValue;
-      boolean buttonPressed = rotaryEncoderButtonPressed;
-      xSemaphoreGive(rotaryEncoderSemaphore);
+
+    if (xSemaphoreTake(programModeSemaphore, (TickType_t) frameTime) == pdTRUE){
+      savedProgramMode = currentProgramMode;
+      xSemaphoreGive(programModeSemaphore);
+    }
+    
+    
+
+
+    if(savedProgramMode == modeOFF){
+
+      if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE){
+        int gotValue = rotaryEncoderValue;
+        boolean buttonPressed = rotaryEncoderButtonPressed;
+        xSemaphoreGive(rotaryEncoderSemaphore);
+        display.clearDisplay();
+        display.setCursor(0,0);
+        display.println(gotValue);
+        if(buttonPressed) display.fillCircle(display.width()/2, display.height()/2, 4, WHITE);
+        display.display();
+      }
+      
+    } else if (savedProgramMode == modeWarmLights){
       display.clearDisplay();
-      display.setCursor(0,0);
-      display.println(gotValue);
-      if(buttonPressed) display.fillCircle(display.width()/2, display.height()/2, 4, WHITE);
+      display.setCursor(2,2);
+      display.println("modeWarmLights");
       display.display();
     }
+    
     vTaskDelayUntil( &screenUpdateTick, frameTime);
   }
   vTaskDelete(NULL);

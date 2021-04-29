@@ -11,7 +11,7 @@ void initializeAccessPoint(){
 
 void initializeAliveMessages(){
   server.on("/alive", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(200, "text/plain", "");
+    request->send(200, "text/plain", "alive");
   });
 }
 
@@ -20,6 +20,25 @@ void initializeMainPage(){
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     Serial.println(request->url() + " -- " + request->host());
     request->send(200, "text/html", "<!DOCTYPE HTML><body>hejj</body>");
+  });
+}
+
+
+void initializeModeSelectors(){
+  server.on("/warmLights", HTTP_GET, [](AsyncWebServerRequest *request){
+    if (xSemaphoreTake(programModeSemaphore, (TickType_t) 1000) == pdTRUE){
+      currentProgramMode = modeWarmLights;
+      xSemaphoreGive(programModeSemaphore);
+      request->send(200, "text/plain", "updated");
+    }
+  });
+
+  server.on("/modeOFF", HTTP_GET, [](AsyncWebServerRequest *request){
+    if (xSemaphoreTake(programModeSemaphore, (TickType_t) 1000) == pdTRUE){
+      currentProgramMode = modeOFF;
+      xSemaphoreGive(programModeSemaphore);
+      request->send(200, "text/plain", "updated");
+    }
   });
 }
 
@@ -51,8 +70,11 @@ void startStation(){
   int reconnectionsLeft = RECONNECTION_MAX_COUNT;
   while(reconnectionsLeft > 0 && (WiFi.status() != WL_CONNECTED)){
     Serial.println("Connecting to <" + String(ST_SSID) + "> Status: " + String(WiFi.status()));
-    if(WiFi.status() == WL_DISCONNECTED) WiFi.reconnect();
-    delay(RECONNECTION_TIMEOUT);
+    if(WiFi.status() == WL_DISCONNECTED){
+      WiFi.reconnect();
+      vTaskDelay(RECONNECTION_TIMEOUT);
+    }
+    vTaskDelay(RECONNECTION_TIMEOUT);
     reconnectionsLeft--;
   }
   StationIPAddress = WiFi.localIP();

@@ -1,1 +1,7 @@
-programMode currentProgramMode = modeOFF; // TODO Read last program from flash memory
+ // TODO Read last program from flash memory
+
+void initializeProgramModes(){
+  programModeSemaphore = initializeSemaphore();
+  currentProgramMode = modeOFF;
+
+}

@@ -101,6 +101,12 @@
         #container > .option.active{
             box-shadow: 0 0 1vmin var(--orange);
         }
+        .button{
+            border: 2px solid var(--light-grey);
+            border-radius: 1vmin;
+            padding: 1vmin;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -128,7 +134,16 @@
             </div>
 
         </div>
-        <div class="option warmLight"></div>
+        <div class="option warmLight">
+            <h1>Warm Lights</h1>
+            <div class="flex-column" style="width: 80%">
+                <input type="range" min="0" max="100" value="50">
+                <h2 class="result">50</h2>
+            </div>
+            <div class="button" data-value="warmLights">Send /warmLights</div>
+            <div class="button" data-value="modeOFF">Send /modeOFF</div>
+
+        </div>
         <div class="option rgb"></div>
     </div>
 
@@ -195,6 +210,16 @@
             request.send(null);
         }
         window.setInterval(checkIfOnline, 5000);
+
+        for(let buttonElement of document.getElementsByClassName("button")){
+            buttonElement.addEventListener('click', ()=>{
+                var request = new XMLHttpRequest();
+                request.open('GET', "http://" + serverIP + "/" + buttonElement.dataset.value, true);
+                request.send(null);
+            })
+        }
+
+
     </script>
 </body>
 </html>

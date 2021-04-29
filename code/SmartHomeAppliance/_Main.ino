@@ -3,6 +3,7 @@
 void setup() {
   Serial.begin(115200);
   initializeRandomSeed();
+  initializeProgramModes();
   
   initializeScreen();
   initializeDisplay();
@@ -10,12 +11,13 @@ void setup() {
   initializeRotaryEncoder();
   initializeRotaryEncoderInterrupt();
   startRotaryEncoderButtonTask();
-  
+
   startScreenManagerTask();
 
   initializeAccessPoint();
   initializeAliveMessages();
   initializeMainPage();
+  initializeModeSelectors();
 
 
   server.on("/ss", HTTP_GET, [](AsyncWebServerRequest *request){
