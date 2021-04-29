@@ -2,6 +2,7 @@
 void sendErrorToSerial(String message);
 void initializeRandomSeed();
 SemaphoreHandle_t initializeSemaphore();
+String stringIPAddress(IPAddress address);
 
 
 /* OLED SCREEN */
@@ -21,6 +22,20 @@ void startRotaryEncoderButtonTask();
 void rotaryEncoderButtonTask( void * parameters );
 
 
-/* WIFI SERVER */
-void initializeServer();
+/* WIFI SERVER + STATION */
+void initializeAccessPoint();
+void initializeAliveMessages();
+void initializeMainPage();
 void startServer();
+void startStation();
+void stationReconnectEvent(WiFiEvent_t event, WiFiEventInfo_t info);
+void initializeStationReconnect();
+
+
+
+/* PROGRAM MODES */
+enum programMode{
+  modeOFF = 0,
+  modeWarmLights = 1,
+  modeRGB = 2
+};

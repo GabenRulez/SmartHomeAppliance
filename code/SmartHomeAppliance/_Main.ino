@@ -13,9 +13,9 @@ void setup() {
   
   startScreenManagerTask();
 
-  initializeServer();
-
-
+  initializeAccessPoint();
+  initializeAliveMessages();
+  initializeMainPage();
 
 
   server.on("/ss", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -24,32 +24,16 @@ void setup() {
   });
 
 
-
   startServer();
 
 
-
-  // TODO This part doesn't work yet, but that may be because I'm connected to the uni network. TODO : Check later on proper router.
-  /*
-  WiFi.begin(ST_SSID, ST_PASSWORD);
-  while(WiFi.status() != WL_CONNECTED){
-    Serial.println(WiFi.status());
-    Serial.print("Connecting to <");
-    Serial.print(ST_SSID);
-    Serial.println(">");
-    delay(500);
-  }*/
-
-  delay(1000);
-  
-  Serial.print("Esp32 soft ip: ");
-  Serial.println(WiFi.softAPIP());
-
-  //Serial.print("Esp32 local ip: ");
-  //Serial.println(WiFi.localIP());
+  startStation();
+  initializeStationReconnect();
 
 
-  
+  //ledcSetup(0, 50000, 8);
+  //ledcAttachPin(16, 0);
+  //ledcWrite(0, 100);
 }
 
 
@@ -61,13 +45,3 @@ void setup() {
 
 void loop() {
 }
-
-
-
-
-
-//      https://github.com/adafruit/Adafruit_BusIO
-//      https://github.com/adafruit/Adafruit-GFX-Library
-//      https://github.com/adafruit/Adafruit_SSD1306
-//      https://github.com/me-no-dev/ESPAsyncWebServer#why-should-you-care
-//      https://github.com/me-no-dev/AsyncTCP

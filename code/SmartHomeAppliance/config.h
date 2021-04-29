@@ -32,8 +32,13 @@ boolean           rotaryEncoderButtonPressed        = false;
 SemaphoreHandle_t rotaryEncoderSemaphore            = NULL;
 
 
-/* WIFI SERVER */
-#define SERVER_PORT       80            // default port for HTTP, so you don't have to specify port in the browser
+/* WIFI SERVER + STATION */
+#define   SERVER_PORT               80  // default port for HTTP, so you don't have to specify port in the browser
+IPAddress AccessPointIPAddress;
+#define   RECONNECTION_MAX_COUNT    15
+#define   RECONNECTION_TIMEOUT      2000
+IPAddress StationIPAddress;
+
 
 
 #endif

@@ -167,4 +167,30 @@ During testing I found out, that I can't really connect it as `Station`  to the 
 
 ___
 
+#### 2021 04 25
+
+I decided to hook up the 12V LEDs (as they are supposed to be a trickier part -> they require `12V` which is non-existant at the moment and they're supposed to be controlled through PWM signal from ESP32).
+
+I hooked up my MOSFET according to it's documentation, added some load in the circuit and tried to test everything.
+
+I encountered some hiccups, where e.g. the `GATE` pin required resistor in line (I was taught, that there is no current through gate and that would mean, that no resistor is required). Also - the ESP32 `5V` port turned out to be too weak (I knew it would happen, but here the current should be pretty limited. I placed `10kΩ` load, so one would think, that the maximum current would be around `1.2mA` ). Due to `High Power Draw` from my laptop's `USB` terminal, Windows 10 blocked my `USB` terminals, thus requiring me to reset those ports + restart PC.
+
+I disconnected `5V` rail from ESP32 and connected it to a phone charger port. That way, this `5V` rail can support over `2A` of current.
+
+Apart from that I somehow fried the step-up-converter. I had enough of the problems, so I stopped work for the day.
+
+___
+
+#### 2021 04 28
+
+I finally got myself a proper router. I can now work on `Station + AP` mode on ESP32.
+
+I started by cleaning up all the code regarding asynchronous web server. I also created few routers, that will allow frontend to maintain connection with the server.
+
+Added `startStation` function, that tries to connect and checks `RECONNECTION_MAX_COUNT` times (every `RECONNECTION_TIMEOUT` milliseconds) whether the ESP successfully connected to the SSID. If not -> it stops checking.
+
+I started creating a HTML website, that will work as user interface through web connection.
+
+___
+
 <div id="bottom"></div>

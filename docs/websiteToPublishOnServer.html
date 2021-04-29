@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Home Appliance</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --options: 3;
+            --white: #FAF3DD;
+            --black: #170F11;
+            --light-grey: #5C6B73;
+            --dark-grey: #404A4F;
+            --orange: #FF9505;
+        }
+        html{
+            background: var(--black);
+        }
+        *{
+            font-family: "Open Sans", sans-serif;
+            color: var(--white);
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            transition: 1s ease;
+        }
+        h1{
+            font-size: 3em;
+        }
+        .line{
+            width: 100%;
+            border-bottom: 1px solid var(--light-grey);
+        }
+        .flex-column{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1em;
+        }
+        #navbar{
+            display: grid;
+            height: calc( 10vh - 0.5vmin );
+            margin-top: 0.5vmin;
+            justify-content: center;
+            grid-template-columns: repeat(var(--options), calc( 100% / (var(--options) + 2) ) );
+            column-gap: 1vmin;
+            width: 100%;
+        }
+        .option {
+            border: 2px solid var(--light-grey);
+            border-radius: 1vmin;
+            background: var(--dark-grey);
+        }
+        .option.active{
+            border-color: var(--orange);
+        }
+        #navbar > .option{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #container{
+            display: grid;
+            width: calc( var(--options) * 100% );
+
+            height: 90vh;
+            padding: 1vmin;
+            grid-template-columns: repeat(var(--options), 80vw);
+            column-gap: 5vw;
+            transform: translateX(10vw);
+        }
+        #container > .option{
+            box-shadow: 0 0 1vmin var(--light-grey);
+            padding: 5% 10%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-direction: column;
+        }
+        #container > .option.active{
+            box-shadow: 0 0 1vmin var(--orange);
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar">
+        <div class="option welcome active">Home screen</div>
+        <div class="option warmLight">Warm Lights</div>
+        <div class="option rgb">RGB Mode</div>
+    </div>
+    <div id="container">
+        <div class="option welcome active">
+            <h1>Smart Home Appliance</h1>
+            <div class="flex-column">
+                <h3>This is a control menu of Smart Home Appliance. You can read more about this product here:</h3>
+                <a href="https://github.com/GabenRulez/SmartHomeAppliance">GitHub.com/GabenRulez/SmartHomeAppliance</a>
+            </div>
+            <div class="line"></div>
+            <h2>Quick Guide</h2>
+            <div class="flex-column">
+                <p>You can navigate through different modes by selecting one of the blocks on top of the page.</p>
+                <p>You can also do the same by clicking on the parts of the sections on either side.</p>
+                <div class="line" style="width: 50%"></div>
+                <p>Once you select one of the modes, you can choose certain parameters and then press "RUN".</p>
+                <p>ESP32 will then receive a message and act accordingly.</p>
+            </div>
+
+        </div>
+        <div class="option warmLight"></div>
+        <div class="option rgb"></div>
+    </div>
+
+
+
+    <script>
+        const containerObject = document.getElementById("container");
+
+        for(let object of document.getElementsByClassName("option")){
+            object.addEventListener('click', ()=>{
+                setNewActive(object.classList)
+            })
+        }
+
+        function setNewActive(classList){
+            if(!classList.contains("active")){
+                let activeElements = document.getElementsByClassName("active")
+                for(let i=activeElements.length-1; i>=0; i--) activeElements[i].classList.remove("active");
+
+                let properClassName;
+                for(let className of classList) {
+                    if(className !== "option" && className !== "active") {
+                        properClassName = className;
+                        break;
+                    }
+                }
+
+                for(let object of document.getElementsByClassName(properClassName)){
+                    object.classList.add("active")
+                }
+
+                let orderNumber;
+                let objectsInContainer = containerObject.getElementsByClassName("option");
+                for(let i=0; i<objectsInContainer.length; i++){
+                    if(objectsInContainer[i].classList.contains(properClassName)){
+                        orderNumber = i;
+                        break;
+                    }
+                }
+
+                containerObject.style.transform = "translateX(" + calculateTranslate(orderNumber) + ")";
+            }
+        }
+        function calculateTranslate(number){
+            return String((-85) * Number(number) + 10) + "vw";
+        }
+    </script>
+</body>
+</html>
