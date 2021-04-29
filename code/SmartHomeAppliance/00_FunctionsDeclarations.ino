@@ -27,10 +27,11 @@ void initializeAccessPoint();
 void initializeAliveMessages();
 void initializeMainPage();
 void startServer();
+void startStationTask();
+void stationTask(void * parameters);
 void startStation();
-void stationReconnectEvent(WiFiEvent_t event, WiFiEventInfo_t info);
 void initializeStationReconnect();
-
+void stationReconnectEvent(WiFiEvent_t event, WiFiEventInfo_t info);
 
 
 /* PROGRAM MODES */

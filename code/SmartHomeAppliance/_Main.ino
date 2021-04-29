@@ -25,11 +25,7 @@ void setup() {
 
 
   startServer();
-
-
-  startStation();
-  initializeStationReconnect();
-
+  startStationTask();
 
   //ledcSetup(0, 50000, 8);
   //ledcAttachPin(16, 0);

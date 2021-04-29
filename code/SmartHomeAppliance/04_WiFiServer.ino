@@ -29,12 +29,26 @@ void startServer(){
 }
 
 
+
+
+void startStationTask(){
+    xTaskCreate( stationTask, "stationTask", 3000, (void*) NULL, 1, NULL);
+}
+
+void stationTask(void * parameters){
+  startStation();
+  initializeStationReconnect();
+  vTaskDelete(NULL);
+}
+
+
 void startStation(){
   WiFi.disconnect(true);
   WiFi.begin(ST_SSID, ST_PASSWORD);
   int reconnectionsLeft = RECONNECTION_MAX_COUNT;
   while(reconnectionsLeft > 0 && (WiFi.status() != WL_CONNECTED)){
     Serial.println("Connecting to <" + String(ST_SSID) + "> Status: " + String(WiFi.status()));
+    if(WiFi.status() == WL_DISCONNECTED) WiFi.reconnect();
     delay(RECONNECTION_TIMEOUT);
     reconnectionsLeft--;
   }
