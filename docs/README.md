@@ -203,7 +203,7 @@ I also added buttons, that send these requests to the ESP32.
 
 Apart from that I designed and created a UI for the web. 
 
-![](/media/photos/workLog/webUI_1.jpg)
+![](/media/photos/workLog/webUI_1.png)
 
 There is an indicator in the top-left corner, which every 5 seconds sends a request `/alive` to the server. If the server doesn't respond in 2 seconds, the indicator will turn red, if it responds - green.
 
