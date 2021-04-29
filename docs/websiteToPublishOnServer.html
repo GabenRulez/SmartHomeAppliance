@@ -25,6 +25,25 @@
             overflow-x: hidden;
             transition: 1s ease;
         }
+
+        #indicator{
+            display: block;
+            width: 2vmin;
+            height: 2vmin;
+            top: 2vmin;
+            left: 2vmin;
+            position: absolute;
+            border-radius: 9999px;
+            background: var(--dark-grey);
+        }
+        .offline{
+            background: red !important;
+        }
+        .online{
+            background: green !important;
+        }
+
+
         h1{
             font-size: 3em;
         }
@@ -85,6 +104,7 @@
     </style>
 </head>
 <body>
+    <div id="indicator"></div>
     <div id="navbar">
         <div class="option welcome active">Home screen</div>
         <div class="option warmLight">Warm Lights</div>
@@ -115,6 +135,7 @@
 
 
     <script>
+        const serverIP = "192.168.0.102";       // TODO delete later, as it will be source (default) ip
         const containerObject = document.getElementById("container");
 
         for(let object of document.getElementsByClassName("option")){
@@ -155,6 +176,25 @@
         function calculateTranslate(number){
             return String((-85) * Number(number) + 10) + "vw";
         }
+
+
+        const indicatorCircle = document.getElementById('indicator');
+        function checkIfOnline(){
+            var request = new XMLHttpRequest();
+            request.open('GET', "http://" + serverIP + "/alive", true); // TODO Source will be serverIP, so there is no need for http://serverIP
+            request.timeout = 1000;
+            request.onload = function (){
+                indicatorCircle.classList.remove("offline");
+                indicatorCircle.classList.add("online");
+                request.ontimeout = function (){};
+            }
+            request.ontimeout = function (){
+                indicatorCircle.classList.remove("online");
+                indicatorCircle.classList.add("offline");
+            }
+            request.send(null);
+        }
+        window.setInterval(checkIfOnline, 5000);
     </script>
 </body>
 </html>

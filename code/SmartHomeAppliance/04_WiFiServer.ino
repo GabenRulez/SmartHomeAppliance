@@ -25,6 +25,9 @@ void initializeMainPage(){
 
 
 void startServer(){
+  // TODO delete line below when going into production
+    DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  
     server.begin();
 }
 
