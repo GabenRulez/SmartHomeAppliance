@@ -193,4 +193,22 @@ I started creating a HTML website, that will work as user interface through web 
 
 ___
 
+#### 2021 04 29
+
+I implemented "modes" functionality. The screen now checks, whether the mode changed from last frame, and then displays accordingly.
+
+Asynchronous server also listens on `/warmLights` and `/modeOFF` requests to change those modes.
+
+I also added buttons, that send these requests to the ESP32.
+
+Apart from that I designed and created a UI for the web. 
+
+![](/media/photos/workLog/webUI_1.jpg)
+
+There is an indicator in the top-left corner, which every 5 seconds sends a request `/alive` to the server. If the server doesn't respond in 2 seconds, the indicator will turn red, if it responds - green.
+
+As the design is fully responsive, the selecting cards take most of the screen estate, however we see a bit of neighbouring cards on left and right. There is also a menu on top, which corresponds to the selected cards.
+
+___
+
 <div id="bottom"></div>
