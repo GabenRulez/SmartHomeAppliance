@@ -49,7 +49,17 @@ To make my ESP32 be recognisable by my Windows machine I installed [CP210x Unive
 
 Copy of exact version I installed is [here](/extra/driver).
 
+___
 
+### Workspace
+
+I used [Arduino IDE](https://www.arduino.cc/en/software) to develop this application.
+
+To make ESP32 work with it, I had to include in `File` > `Preferences` > `Settings` > `Additional Boards Manager URLs:` line: `https://dl.espressif.com/dl/package_esp32_index.json, http://arduino.esp8266.com/stable/package_esp8266com_index.json` (if this space is not empty, then simply put those after `,` (comma)).
+
+Then I went into `Tools` > `Board` > `Boards Manager`, searched for `ESP32` and installed the addon by "Espressif Systems".
+
+Then from `Tools` > `Board` > `ESP32` I chose `DOIT ESP32 DEVKIT V1` (sadly there isn't any listed `DEVKIT V4` board).
 
 ___
 
