@@ -58,6 +58,13 @@
             justify-content: center;
             gap: 1em;
         }
+        .flex-row{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 1em;
+        }
         #navbar{
             display: grid;
             height: calc( 10vh - 0.5vmin );
@@ -107,6 +114,14 @@
             padding: 1vmin;
             cursor: pointer;
         }
+        .button.disabled{
+            cursor: not-allowed;
+            box-shadow: inset 0 0 5000px var(--light-grey);
+        }
+
+        #warmLightRange{
+            width: 80%;
+        }
     </style>
 </head>
 <body>
@@ -137,12 +152,18 @@
         <div class="option warmLight">
             <h1>Warm Lights</h1>
             <div class="flex-column" style="width: 80%">
-                <input type="range" min="0" max="100" value="50">
+                <input name="warmLightRange" id="warmLightRange" type="range" min="0" max="100" value="50" autocomplete="off" oninput="this.parentNode.querySelector('h2').innerHTML = this.value;">
                 <h2 class="result">50</h2>
             </div>
-            <div class="button" data-value="warmLights">Send /warmLights</div>
-            <div class="button" data-value="modeOFF">Send /modeOFF</div>
-
+            <div class="flex-row">
+                <div class="button" data-value="warmLights">Turn "Warm Lights" mode ON</div>
+                <div class="button" data-value="modeOFF">Turn OFF</div>
+            </div>
+            <div class="line"></div>
+            <div class="flex-column">
+                <p>This mode turns on the 12V warm-white LEDs.</p>
+                <p>Recommended for hours before sleep.</p>
+            </div>
         </div>
         <div class="option rgb"></div>
     </div>
@@ -213,8 +234,26 @@
 
         for(let buttonElement of document.getElementsByClassName("button")){
             buttonElement.addEventListener('click', ()=>{
+                buttonElement.classList.add('disabled');
+                buttonElement.style.borderColor = "";
                 var request = new XMLHttpRequest();
-                request.open('GET', "http://" + serverIP + "/" + buttonElement.dataset.value, true);
+                switch(buttonElement.dataset.value){
+                    case "warmLights":
+                        request.open('GET', "http://" + serverIP + "/warmLights?strength=" + document.getElementById('warmLightRange').value, true);
+                        break;
+                    case "modeOFF":
+                    default:
+                        request.open('GET', "http://" + serverIP + "/" + buttonElement.dataset.value, true);
+                        break;
+                }
+                request.onload = function (){
+                    buttonElement.classList.remove('disabled');
+                    request.ontimeout = function (){};
+                }
+                request.ontimeout = function (){
+                    buttonElement.classList.remove('disabled');
+                    buttonElement.style.borderColor = "red";
+                }
                 request.send(null);
             })
         }

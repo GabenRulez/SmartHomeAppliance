@@ -29,6 +29,8 @@ void setup() {
   startServer();
   startStationTask();
 
+  Serial.println(programConfig.currentMode);
+
   //ledcSetup(0, 50000, 8);
   //ledcAttachPin(16, 0);
   //ledcWrite(0, 100);

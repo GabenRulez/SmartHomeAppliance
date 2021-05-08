@@ -27,20 +27,16 @@ void startScreenManagerTask(){
 void screenManagerTask(void *parameters){
   portTickType screenUpdateTick = xTaskGetTickCount();
   int frameTime = 1000 / FPS;
-
-  programMode savedProgramMode = modeOFF;
+  ProgramConfig localProgramConfig;
+  
   while(true){
-
-    if (xSemaphoreTake(programModeSemaphore, (TickType_t) frameTime) == pdTRUE){
-      savedProgramMode = currentProgramMode;
-      xSemaphoreGive(programModeSemaphore);
+    if (xSemaphoreTake(programConfigSemaphore, (TickType_t) frameTime) == pdTRUE){
+      localProgramConfig = programConfig;
+      xSemaphoreGive(programConfigSemaphore);
     }
     
     
-
-
-    if(savedProgramMode == modeOFF){
-
+    if(localProgramConfig.currentMode == modeOFF){
       if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE){
         int gotValue = rotaryEncoderValue;
         boolean buttonPressed = rotaryEncoderButtonPressed;
@@ -52,10 +48,15 @@ void screenManagerTask(void *parameters){
         display.display();
       }
       
-    } else if (savedProgramMode == modeWarmLights){
+    } else if (localProgramConfig.currentMode == modeWarmLights){
       display.clearDisplay();
       display.setCursor(2,2);
       display.println("modeWarmLights");
+      display.print("strength: "); 
+      display.print(localProgramConfig.warmLightsStrength);
+      display.display();
+    } else{
+      display.clearDisplay();
       display.display();
     }
     

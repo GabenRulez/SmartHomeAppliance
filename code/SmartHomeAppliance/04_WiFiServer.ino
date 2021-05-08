@@ -26,17 +26,22 @@ void initializeMainPage(){
 
 void initializeModeSelectors(){
   server.on("/warmLights", HTTP_GET, [](AsyncWebServerRequest *request){
-    if (xSemaphoreTake(programModeSemaphore, (TickType_t) 1000) == pdTRUE){
-      currentProgramMode = modeWarmLights;
-      xSemaphoreGive(programModeSemaphore);
+    int requestedStrength = 50;
+    if(request->hasParam("strength")) requestedStrength = request->getParam("strength")->value().toInt();
+    if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE){
+      
+      programConfig.currentMode = modeWarmLights;
+      programConfig.warmLightsStrength = requestedStrength;
+      
+      xSemaphoreGive(programConfigSemaphore);
       request->send(200, "text/plain", "updated");
     }
   });
 
   server.on("/modeOFF", HTTP_GET, [](AsyncWebServerRequest *request){
-    if (xSemaphoreTake(programModeSemaphore, (TickType_t) 1000) == pdTRUE){
-      currentProgramMode = modeOFF;
-      xSemaphoreGive(programModeSemaphore);
+    if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE){
+      programConfig.currentMode = modeOFF;
+      xSemaphoreGive(programConfigSemaphore);
       request->send(200, "text/plain", "updated");
     }
   });
