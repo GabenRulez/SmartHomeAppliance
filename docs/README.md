@@ -211,4 +211,16 @@ As the design is fully responsive, the selecting cards take most of the screen e
 
 ___
 
+#### 2021 05 08
+
+Shops finally opened and I was able to go and buy some "diffuser" for the LEDs.
+
+I decided upon buying cheap ~1$ plastic, white Ikea plant holder "[Nejkon](https://www.ikea.com/pl/pl/p/nejkon-oslonka-doniczki-bialy-80285792/)". It turned out alright, as it allowed some of the light through it. 
+
+![](/media/photos/workLog/LEDInAJar.gif)
+
+If it turns out to be absorbing too much light, then I might just buy the cheapest lamp there is, break it into parts and use it's diffuser instead.
+
+___
+
 <div id="bottom"></div>
