@@ -33,13 +33,3 @@ void stationTask(void * parameters);
 void startStation();
 void initializeStationReconnect();
 void stationReconnectEvent(WiFiEvent_t event, WiFiEventInfo_t info);
-
-
-/* PROGRAM MODES */
-enum programMode{
-  modeOFF = 0,
-  modeWarmLights = 1,
-  modeRGB = 2
-};
-programMode currentProgramMode;
-int modeWarmLightsStrength = 50;

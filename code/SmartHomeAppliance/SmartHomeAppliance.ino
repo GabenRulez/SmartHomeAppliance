@@ -12,5 +12,12 @@ Additional code is in multiple .ino files in the same directory.
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
+/* PROGRAM MODES */
+enum programMode{
+  modeOFF = 0,
+  modeWarmLights = 1,
+  modeRGB = 2
+};
+
 #include "config.h"
 #include "secretConfig.h"

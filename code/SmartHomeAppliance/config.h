@@ -4,7 +4,14 @@
 /* DEVICE */
 #define AVAILABLE_CORES   ESP.getChipCores()
 #define DISCONNECTED_PIN  32
-SemaphoreHandle_t programModeSemaphore            = NULL;
+SemaphoreHandle_t   programModeSemaphore            = NULL;
+programMode         currentProgramMode;
+int modeWarmLights_Strength = 50;
+int modeRGB_Red = 0;
+int modeRGB_Green = 0;
+int modeRGB_Blue = 0;
+
+
 
 /*  OLED SCREEN   */
 #define Display_SCL_Pin   22            // IO22
