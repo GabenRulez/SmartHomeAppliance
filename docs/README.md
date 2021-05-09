@@ -223,4 +223,13 @@ If it turns out to be absorbing too much light, then I might just buy the cheape
 
 ___
 
+#### 2021 05 09
+
+I took all the `programModes` variables that were "somewhere" and put them into one, solid `struct`. That way, the screen can have its own local copy and update it, as a whole at once, thus reducing the amount it takes the semaphore.
+
+I updated the HTML page to also send range slider value, as `strength=` parameter. Buttons also change their form, when they haven't yet received the appropriate response from the server.
+
+Then I updated the server query, to collect this `strength=` parameter and then display it on the OLED screen.
+___
+
 <div id="bottom"></div>
