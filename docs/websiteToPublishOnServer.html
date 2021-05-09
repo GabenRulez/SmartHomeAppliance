@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Smart Home Appliance</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.1/css/reinvented-color-wheel.min.css">
     <style>
         :root{
             --options: 3;
@@ -23,6 +25,7 @@
             padding: 0;
             box-sizing: border-box;
             overflow-x: hidden;
+            text-align: center;
             transition: 1s ease;
         }
 
@@ -91,7 +94,7 @@
             display: grid;
             width: calc( var(--options) * 100% );
 
-            height: 90vh;
+            min-height: 90vh;
             padding: 1vmin;
             grid-template-columns: repeat(var(--options), 80vw);
             column-gap: 5vw;
@@ -121,6 +124,10 @@
 
         #warmLightRange{
             width: 80%;
+        }
+
+        .reinvented-color-wheel div, canvas{
+            transition: 0s;
         }
     </style>
 </head>
@@ -165,7 +172,27 @@
                 <p>Recommended for hours before sleep.</p>
             </div>
         </div>
-        <div class="option rgb"></div>
+
+
+
+        <div class="option rgb">
+            <h1>RGB Lights</h1>
+            <div id="rgbPickerContainer" class="flex-column" style="width: 80%">
+
+            </div>
+            <div id="redValue" style="display: none;">255</div>
+            <div id="greenValue" style="display: none;">0</div>
+            <div id="blueValue" style="display: none;">0</div>
+            <div class="flex-row">
+                <div class="button" data-value="RGBLights">Turn "RGB Lights" mode ON</div>
+                <div class="button" data-value="modeOFF">Turn OFF</div>
+            </div>
+            <div class="line"></div>
+            <div class="flex-column">
+                <p>This mode turns on the 5V addressable RGB LEDs.</p>
+                <p>They help bring "the mood" to the room.</p>
+            </div>
+        </div>
     </div>
 
 
@@ -241,6 +268,9 @@
                     case "warmLights":
                         request.open('GET', "http://" + serverIP + "/warmLights?strength=" + document.getElementById('warmLightRange').value, true);
                         break;
+                    case "RGBLights":
+                        request.open('GET', "http://" + serverIP + "/RGBLights?red=" + document.getElementById('redValue').innerHTML + "&green=" + document.getElementById('greenValue').innerHTML + "&blue=" + document.getElementById('blueValue').innerHTML, true);
+                        break;
                     case "modeOFF":
                     default:
                         request.open('GET', "http://" + serverIP + "/" + buttonElement.dataset.value, true);
@@ -257,8 +287,25 @@
                 request.send(null);
             })
         }
-
-
+    </script>
+    <script type="module">
+        import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.1/es/reinvented-color-wheel.bundle.min.js";
+        const redValueObject = document.getElementById('redValue');
+        const greenValueObject = document.getElementById('greenValue');
+        const blueValueObject = document.getElementById('blueValue');
+        const colorWheel = new ReinventedColorWheel({
+            appendTo: document.getElementById("rgbPickerContainer"),
+            hsv: [0, 100, 100],
+            //wheelDiameter: 200,
+            //wheelThickness: 30,
+            //handleDiameter: 16,
+            wheelReflectsSaturation: true,
+            onChange: function (color) {
+                redValueObject.innerHTML = color.rgb[0];
+                greenValueObject.innerHTML = color.rgb[1];
+                blueValueObject.innerHTML = color.rgb[2];
+            },
+        });
     </script>
 </body>
 </html>
