@@ -230,6 +230,15 @@ I took all the `programModes` variables that were "somewhere" and put them into 
 I updated the HTML page to also send range slider value, as `strength=` parameter. Buttons also change their form, when they haven't yet received the appropriate response from the server.
 
 Then I updated the server query, to collect this `strength=` parameter and then display it on the OLED screen.
+
+
+
+Later I created an `RGBLights` router, that takes in `red`, `green` and `blue` parameters, then display on the OLED screen. ![](/media/photos/workLog/rgbOnDisplay.jpeg)
+
+ I updated the HTML page, to allow it to select any RGB value. I used [external library called "Reinvented Color Wheel"](https://github.com/luncheon/reinvented-color-wheel) I found on the internet. Overall the page came out nicely (at least in my opinion :smiley:).
+
+![](/media/photos/workLog/webUI_2.png)
+
 ___
 
 <div id="bottom"></div>
