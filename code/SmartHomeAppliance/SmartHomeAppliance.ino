@@ -16,7 +16,7 @@ Additional code is in multiple .ino files in the same directory.
 enum programMode{
   modeOFF = 0,
   modeWarmLights = 1,
-  modeRGB = 2
+  modeRGBLights = 2
 };
 
 struct ProgramConfig {

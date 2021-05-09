@@ -38,6 +38,28 @@ void initializeModeSelectors(){
     }
   });
 
+
+  server.on("/RGBLights", HTTP_GET, [](AsyncWebServerRequest *request){
+    int red, blue, green;
+    if(request->hasParam("red") && request->hasParam("green") && request->hasParam("blue")) {
+      red = request->getParam("red")->value().toInt();
+      green = request->getParam("green")->value().toInt();
+      blue = request->getParam("blue")->value().toInt();
+      
+      if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE){
+    
+        programConfig.currentMode = modeRGBLights;
+        programConfig.RGBLightsRed = red%256;
+        programConfig.RGBLightsGreen = green%256;
+        programConfig.RGBLightsBlue = blue%256;
+        
+        xSemaphoreGive(programConfigSemaphore);
+        request->send(200, "text/plain", "updated");
+      }
+    }
+    request->send(403, "text/plain", "No 'red', 'green', 'blue' parameters");
+  });
+
   server.on("/modeOFF", HTTP_GET, [](AsyncWebServerRequest *request){
     if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE){
       programConfig.currentMode = modeOFF;

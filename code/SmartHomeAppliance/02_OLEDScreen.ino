@@ -55,6 +55,20 @@ void screenManagerTask(void *parameters){
       display.print("strength: "); 
       display.print(localProgramConfig.warmLightsStrength);
       display.display();
+      
+    } else if (localProgramConfig.currentMode == modeRGBLights){
+      display.clearDisplay();
+      display.setCursor(2,2);
+      display.println("modeRGBLights");
+      display.println("color (rgb): "); 
+      display.print("(");
+      display.print(localProgramConfig.RGBLightsRed);
+      display.print(", ");
+      display.print(localProgramConfig.RGBLightsGreen);
+      display.print(", ");
+      display.print(localProgramConfig.RGBLightsBlue);
+      display.print(")");
+      display.display();
     } else{
       display.clearDisplay();
       display.display();
