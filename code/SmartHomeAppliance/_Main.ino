@@ -4,7 +4,7 @@ void setup() {
   Serial.begin(115200);
   initializeRandomSeed();
   initializeProgramModes();
-  
+
   initializeScreen();
   initializeDisplay();
 
@@ -20,7 +20,7 @@ void setup() {
   initializeModeSelectors();
 
 
-  server.on("/ss", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/ss", HTTP_GET, [](AsyncWebServerRequest * request) {
     Serial.println(request->url() + " -- " + request->host());
     request->send(200, "text/html", "<!DOCTYPE HTML><body>hejj</body>");
   });

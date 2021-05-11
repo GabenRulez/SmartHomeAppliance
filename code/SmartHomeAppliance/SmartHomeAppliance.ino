@@ -1,6 +1,6 @@
 /*
-This is a main file of our project for Embedded Systems course in AGH Kraków.
-Additional code is in multiple .ino files in the same directory.
+  This is a main file of our project for Embedded Systems course in AGH Kraków.
+  Additional code is in multiple .ino files in the same directory.
 */
 
 #include <SPI.h>
@@ -13,7 +13,7 @@ Additional code is in multiple .ino files in the same directory.
 #include <ESPAsyncWebServer.h>
 
 /* PROGRAM MODES */
-enum programMode{
+enum programMode {
   modeOFF = 0,
   modeWarmLights = 1,
   modeRGBLights = 2
