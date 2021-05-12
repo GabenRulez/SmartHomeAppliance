@@ -48,12 +48,33 @@ void initializeModeSelectors() {
 
       if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE) {
 
+        int oldRed = programConfig.RGBLightsRed;
+        int oldGreen = programConfig.RGBLightsGreen;
+        int oldBlue = programConfig.RGBLightsBlue;
+
         programConfig.currentMode = modeRGBLights;
         programConfig.RGBLightsRed = red % 256;
         programConfig.RGBLightsGreen = green % 256;
         programConfig.RGBLightsBlue = blue % 256;
 
         xSemaphoreGive(programConfigSemaphore);
+
+
+        int iloscTranzycji = 100;
+        // TODO TO USUNĄĆ PÓZNIEJ
+        for(int klatka = 1; klatka <= iloscTranzycji; klatka++){
+          for(int i=0; i<NEOPIXEL_PIXELS; i++){
+            int newerRed = ((oldRed * (iloscTranzycji - klatka)) + (red * klatka))/iloscTranzycji;
+            int newerGreen = ((oldGreen * (iloscTranzycji - klatka)) + (green * klatka))/iloscTranzycji;
+            int newerBlue = ((oldBlue * (iloscTranzycji - klatka)) + (blue * klatka))/iloscTranzycji;
+            pixels.setPixelColor(i,  newerRed % 256,  newerGreen % 256,  newerBlue % 256);
+          }
+          pixels.show();
+          delay(10);
+        }
+
+
+        
         request->send(200, "text/plain", "updated");
       }
     }
@@ -65,6 +86,20 @@ void initializeModeSelectors() {
       programConfig.currentMode = modeOFF;
       xSemaphoreGive(programConfigSemaphore);
       request->send(200, "text/plain", "updated");
+
+
+      
+      for(int i=0; i<NEOPIXEL_PIXELS; i++){
+        pixels.setPixelColor(i, 0,  0,  0);
+      }
+      pixels.show();
+      programConfig.RGBLightsRed = 0;
+      programConfig.RGBLightsGreen = 0;
+      programConfig.RGBLightsBlue = 0;
+
+
+
+      
     }
   });
 }

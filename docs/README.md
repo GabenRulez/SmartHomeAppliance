@@ -241,4 +241,20 @@ Later I created an `RGBLights` router, that takes in `red`, `green` and `blue` p
 
 ___
 
+#### 2021 05 11
+
+I hooked up the addressable RGB strip to the 5V rail and connected its data pin to `GPIO 32`.
+
+Then I installed the [Adafruit  NeoPixel library](https://github.com/adafruit/Adafruit_NeoPixel) and tried few template configurations. I encountered some problems, such as that the LEDs were constantly changing their brightness and colors, as it was selected by random, while my functions should display a "rainbow" pattern.
+
+Turns out it was due to different grounds (`5V` rail was disconnected from the ESP32 and connected into `5V` source, USB charger). After powering the whole setup through just `5V` source, the problem was no more.
+
+Due to constantly changing and stuttering light source I got sick, so I just quickly wrote some functions to change color, according to HTTP request. It all worked out, but I plan on creating a worker task, that would receive commands, such as "turn LEDs green", or "play rainbow animation".
+
+![](/media/photos/workLog/RGBLEDInAJar.gif)
+
+Oh, and I made the transition smooth, by linearly interpolating between the two values.
+
+___
+
 <div id="bottom"></div>

@@ -29,3 +29,12 @@ struct ProgramConfig {
 
 #include "config.h"
 #include "secretConfig.h"
+
+
+
+
+
+#define NEOPIXEL_PIN 32
+#define NEOPIXEL_PIXELS 30
+#include <Adafruit_NeoPixel.h>
+Adafruit_NeoPixel pixels(NEOPIXEL_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
