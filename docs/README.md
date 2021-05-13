@@ -257,4 +257,26 @@ Oh, and I made the transition smooth, by linearly interpolating between the two 
 
 ___
 
+#### 2021 05 13
+
+I asked my college professor for tips regarding problems with PWM. We refactored how the circuit should look and decided upon first checking, whether the MOSFET and Boost-Up-Converter are working correctly.
+
+![](/media/photos/workLog/schematic_1.png)
+
+Before I wired it as in the schematic I found one source of an earlier problem - when I connect LED strip to `12V` source, the `5V` rail voltage falls to just `3.7V` - and that is the reason why ESP32 was constantly crashing.
+
+![](/media/photos/workLog/CircuitState_05_pre.jpg)
+
+![](/media/photos/workLog/CircuitState_05_post.jpg)
+
+ I cut off most of the LED strip and left just 40cm = 24 LEDs.
+
+Then I wired everything as in the schematic. It was working now with no crashes and no smoke :smile:
+
+![](/media/photos/workLog/WarmLightsMOSFET.gif)
+
+
+
+___
+
 <div id="bottom"></div>
