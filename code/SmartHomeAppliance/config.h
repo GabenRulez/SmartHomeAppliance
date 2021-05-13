@@ -20,7 +20,7 @@ struct ProgramConfig programConfig = {modeOFF, 50, 0, 0, 0};
 #define BLACK             SSD1306_BLACK
 #define FPS               60
 int displayCore         = 0;            // Overwritten later. It's the core, on which the I^2C communication will take place on (it's also the core, the Arduino IDE starts on).
-
+QueueHandle_t screenQueue;
 
 
 /*  ROTARY ENCODER  */
@@ -41,6 +41,15 @@ IPAddress AccessPointIPAddress;
 #define   RECONNECTION_MAX_COUNT    15
 #define   RECONNECTION_TIMEOUT      2000
 IPAddress StationIPAddress;
+
+
+/* LED CONTROLLER */
+QueueHandle_t LEDControllerQueue;
+#define   LED_QUEUE_LENGTH 16
+uint8_t   RGBBrightness = 255;
+#define ANIMATION_LENGTH 20
+int checkTime = 1000 / FPS;
+
 
 
 

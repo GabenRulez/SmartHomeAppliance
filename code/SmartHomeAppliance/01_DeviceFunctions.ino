@@ -19,6 +19,20 @@ SemaphoreHandle_t initializeSemaphore() {
 }
 
 
+QueueHandle_t initializeQueue(int queueLength, int sizeOfCell) {
+  QueueHandle_t queue = xQueueCreate(queueLength, sizeOfCell);
+  if (queue == NULL) {
+    sendErrorToSerial("Failed initializing queue!");
+  }
+  return queue;
+}
+
+
 String stringIPAddress(IPAddress address) {
   return String(address[0]) + "." + String(address[1]) + "." + String(address[2]) + "." + String(address[3]);
+}
+
+
+void taskSleep(int miliseconds){
+  vTaskDelay( miliseconds / portTICK_PERIOD_MS);
 }

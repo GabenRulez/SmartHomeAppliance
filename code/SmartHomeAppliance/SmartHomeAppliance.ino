@@ -16,7 +16,8 @@
 enum programMode {
   modeOFF = 0,
   modeWarmLights = 1,
-  modeRGBLights = 2
+  modeRGBLights = 2,
+  showIP = 99
 };
 
 struct ProgramConfig {
@@ -26,6 +27,30 @@ struct ProgramConfig {
   uint8_t RGBLightsGreen;       // MAX = 255
   uint8_t RGBLightsBlue;        // MAX = 255
 };
+
+enum LEDControllerCommandType {
+  lightsOFF = 0,
+  warmLightsON = 1,
+  staticColor = 2,
+  twoColors = 3,
+  threeColors = 4,
+  rainbow = 5
+};
+
+struct LEDControllerCommand {
+  LEDControllerCommandType type;
+  uint8_t brightness;
+  uint8_t red1;
+  uint8_t green1;
+  uint8_t blue1;
+  uint8_t red2;
+  uint8_t green2;
+  uint8_t blue2;
+  uint8_t red3;
+  uint8_t green3;
+  uint8_t blue3;
+};
+
 
 #include "config.h"
 #include "secretConfig.h"
@@ -37,4 +62,4 @@ struct ProgramConfig {
 #define NEOPIXEL_PIN 32
 #define NEOPIXEL_PIXELS 30
 #include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel pixels(NEOPIXEL_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel stripRGB(NEOPIXEL_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);

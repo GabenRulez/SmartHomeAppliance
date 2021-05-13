@@ -2,7 +2,9 @@
 void sendErrorToSerial(String message);
 void initializeRandomSeed();
 SemaphoreHandle_t initializeSemaphore();
+QueueHandle_t initializeQueue(int queueLength, int sizeOfCell);
 String stringIPAddress(IPAddress address);
+void taskSleep(int miliseconds);
 
 
 /* OLED SCREEN */
@@ -33,3 +35,11 @@ void stationTask(void * parameters);
 void startStation();
 void initializeStationReconnect();
 void stationReconnectEvent(WiFiEvent_t event, WiFiEventInfo_t info);
+
+
+/* LED CONTROLLER */
+void initializeLEDController();
+void startLEDControllerTask();
+void sendLEDControllerCommand(LEDControllerCommand command);
+void LEDControllerTask(void *parameters);
+void turnOffLights();
