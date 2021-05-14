@@ -25,7 +25,6 @@ void LEDControllerTask(void *parameters) {
 
   while (true) {
     if ( xQueueReceive( LEDControllerQueue, &command, (TickType_t) 100)) {
-      Serial.println(command.type);
       switch (command.type) {
 
         case lightsOFF:
@@ -119,15 +118,22 @@ void turnOffLEDWorker() {
 
 void handleTwoColors(void *parameters) {
   struct LEDControllerCommand command = globalLEDCommand;
+  float animationIntervalMultiplierMultiplier = 1.0 * command.animationIntervalMultiplier / 256;
+  uint16_t moddedAnimationLength = floor(32.0 * ANIMATION_LENGTH * animationIntervalMultiplierMultiplier);
   uint16_t j = 0;
+  uint8_t iter = 0;
 
   portTickType updateTick = xTaskGetTickCount();
   while (true) {
-    j = (j+1) % (32 * ANIMATION_LENGTH);
+    if(iter < ANIMATION_LENGTH){
+      iter++;
+      stripRGB.setBrightness( (int) RGBBrightness * iter / ANIMATION_LENGTH );
+    };
+    j = (j+1) % (moddedAnimationLength);
     updateTick = xTaskGetTickCount();
     if (xSemaphoreTake(LEDWorkerTaskSemaphore, (TickType_t) 10) == pdTRUE){
 
-      float parameter_1 = 0.5 + sin(TWO_PI * (float)j / (32.0 * ANIMATION_LENGTH)) / 2.0;
+      float parameter_1 = 0.5 + sin(TWO_PI * (float)j  / (moddedAnimationLength)) / 2.0;
       float parameter_2 = 1.0 - parameter_1;
   
       uint8_t newRed, newGreen, newBlue;

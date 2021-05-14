@@ -39,7 +39,8 @@ enum LEDControllerCommandType {
 
 struct LEDControllerCommand {
   LEDControllerCommandType type;
-  uint8_t brightness;
+  uint8_t brightness; 
+  uint8_t animationIntervalMultiplier;
   uint8_t red1;
   uint8_t green1;
   uint8_t blue1;

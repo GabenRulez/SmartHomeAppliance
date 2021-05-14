@@ -30,6 +30,9 @@ void screenManagerTask(void *parameters) {
   ProgramConfig localProgramConfig;
 
   while (true) {
+    
+
+    
     if (xSemaphoreTake(programConfigSemaphore, (TickType_t) frameTime) == pdTRUE) {
       localProgramConfig = programConfig;
       xSemaphoreGive(programConfigSemaphore);

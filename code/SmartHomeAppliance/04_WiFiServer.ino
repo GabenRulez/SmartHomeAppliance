@@ -49,7 +49,7 @@ void initializeModeSelectors() {
       green   = normalizeBetween( request->getParam("green")->value().toInt(),  0, 255);
       blue    = normalizeBetween( request->getParam("blue")->value().toInt(),   0, 255);
 
-      LEDControllerCommand command = {staticColor, 0, red, green, blue};
+      LEDControllerCommand command = {staticColor, 0, 0, red, green, blue};
       sendLEDControllerCommand(command);
 
       if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE) {
@@ -67,17 +67,19 @@ void initializeModeSelectors() {
   });
 
   server.on("/twoColors", HTTP_GET, [](AsyncWebServerRequest * request) {
-    int red1, green1, blue1, red2, green2, blue2;
-    if (request->hasParam("red1") && request->hasParam("green1") && request->hasParam("blue1") && request->hasParam("red2") && request->hasParam("green2") && request->hasParam("blue2")){
+    int red1, green1, blue1, red2, green2, blue2, animationIntervalMultiplier;
+    if (request->hasParam("red1") && request->hasParam("green1") && request->hasParam("blue1") && request->hasParam("red2") && request->hasParam("green2") && request->hasParam("blue2") && request->hasParam("speed")){
       red1    = normalizeBetween(  request->getParam("red1")->value().toInt()    , 0, 255);
       green1  = normalizeBetween(  request->getParam("green1")->value().toInt()  , 0, 255);
       blue1   = normalizeBetween(  request->getParam("blue1")->value().toInt()   , 0, 255);
       red2    = normalizeBetween(  request->getParam("red2")->value().toInt()    , 0, 255);
       green2  = normalizeBetween(  request->getParam("green2")->value().toInt()  , 0, 255);
       blue2   = normalizeBetween(  request->getParam("blue2")->value().toInt()   , 0, 255);
-
+      // TODO zamienić skalę, bo SPEED = 1 -> przyspieszenie 128x, SPEED = 255 -> zwolnienie 2x
+      animationIntervalMultiplier = normalizeBetween(  request->getParam("speed")->value().toInt() , 1, 255);
+      
       request->send(200, "text/plain", "updated");
-      LEDControllerCommand command = {twoColors, 0, red1, green1, blue1, red2, green2, blue2};
+      LEDControllerCommand command = {twoColors, 0, animationIntervalMultiplier, red1, green1, blue1, red2, green2, blue2};
       sendLEDControllerCommand(command);
     }
     request->send(403, "text/plain", "No 'red1', 'green1', 'blue1', 'red2', 'green2', 'blue2' parameters");
