@@ -36,3 +36,12 @@ String stringIPAddress(IPAddress address) {
 void taskSleep(int miliseconds){
   vTaskDelay( miliseconds / portTICK_PERIOD_MS);
 }
+
+
+int normalizeBetween(int value, int from, int to){
+  if(to > from){
+    if(value < from) value = from;
+    else if(value > to) value = to;
+  }
+  return value;
+}

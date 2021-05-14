@@ -275,7 +275,24 @@ Then I wired everything as in the schematic. It was working now with no crashes 
 
 ![](/media/photos/workLog/WarmLightsMOSFET.gif)
 
+___
 
+#### 2021 05 14
+
+I created a separate task `LEDControllerTask`, which directly controls the LED strips. It receives `LEDControllerCommands` through FreeRTOS `queue`s.
+
+I got rid of any time-demanding things in handling server requests. Now the handlers just verify whether the request is correct, and then sends commands to LED controller.
+
+Now it's properly handling:
+
+- static RGB color
+- smooth transitions between static colors, turning ON / OFF
+- two color mode (sinusoidally changing between those two)
+
+Added API call for the new `twoColors` mode. I will need to add configurator to GUI. It works though, with commands like 
+`192.168.0.102/twoColors?red1=80&green1=200&blue1=0&red2=200&green2=0&blue2=200`
+
+Due to some bugs that were happening when `worker` was being shut down while using `LEDStrip.show()` I added semaphore, so that the task will enter a critical section while doing this.
 
 ___
 

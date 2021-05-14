@@ -5,6 +5,7 @@ SemaphoreHandle_t initializeSemaphore();
 QueueHandle_t initializeQueue(int queueLength, int sizeOfCell);
 String stringIPAddress(IPAddress address);
 void taskSleep(int miliseconds);
+int normalizeBetween(int value, int from, int to);
 
 
 /* OLED SCREEN */
@@ -43,3 +44,5 @@ void startLEDControllerTask();
 void sendLEDControllerCommand(LEDControllerCommand command);
 void LEDControllerTask(void *parameters);
 void turnOffLights();
+void turnOffLEDWorker();
+void handleTwoColors(void *parameters);
