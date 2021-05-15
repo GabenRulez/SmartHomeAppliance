@@ -26,19 +26,21 @@ void initializeMainPage() {
 
 void initializeModeSelectors() {
   server.on("/warmLights", HTTP_GET, [](AsyncWebServerRequest * request) {
-    int requestedStrength = 50;
-    if (request->hasParam("strength")) requestedStrength = request->getParam("strength")->value().toInt();
-    if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE) {
-
-      programConfig.currentMode = modeWarmLights;
-      programConfig.warmLightsStrength = requestedStrength;
+    if (request->hasParam("strength")){
+      uint8_t requestedStrength = normalizeBetween( request->getParam("strength")->value().toInt(), 0, 255);
+      
+      if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE) {
+        programConfig.currentMode = modeWarmLights;
+        programConfig.warmLightsStrength = requestedStrength;
+        xSemaphoreGive(programConfigSemaphore);
+        request->send(200, "text/plain", "updated");
+      }
 
       LEDControllerCommand command = {warmLightsON, requestedStrength};
       sendLEDControllerCommand(command);
-
-      xSemaphoreGive(programConfigSemaphore);
-      request->send(200, "text/plain", "updated");
+      
     }
+    request->send(403, "text/plain", "No 'strength' parameter");
   });
 
 

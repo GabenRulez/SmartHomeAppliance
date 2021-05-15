@@ -294,6 +294,34 @@ Added API call for the new `twoColors` mode. I will need to add configurator to 
 
 Due to some bugs that were happening when `worker` was being shut down while using `LEDStrip.show()` I added semaphore, so that the task will enter a critical section while doing this.
 
+
+
+Later in the day I went to IKEA again, as I decided to buy some cheap lamp instead of this "Nejkon" plant holder. I bought "[Lampan](https://www.ikea.com/pl/pl/p/lampan-lampa-stolowa-bialy-20046988/)" for about ~5$.
+
+![](/media/photos/workLog/Lampan_1.jpg)
+
+I took the power cord apart.
+
+![](/media/photos/workLog/Lampan_parts.jpg)
+
+Overall it looks much nicer, as it lets more light through. Also this base is also lighting up with LEDs, further dispersing the light.
+
+
+
+I decided to finally code in the `PWM` functionality to the program. Fortunately it went relatively easy now (nothing burned down) and it was up and running quickly.
+
+![](/media/photos/workLog/CircuitState_06.jpg)
+
+I cleaned up the whole circuit with thicker cables.
+
+![](/media/photos/workLog/CircuitState_07.jpg)
+
+I went on and cleaned up all the `PWM` code. I rewrote the server route, added proper handling of the command to `LEDControllerTask` and coded smooth transition for `ON` /`OFF`.
+
+I tested everything and it works as intended.
+
+
+
 ___
 
 <div id="bottom"></div>

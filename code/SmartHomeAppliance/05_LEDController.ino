@@ -1,9 +1,18 @@
+Adafruit_NeoPixel stripRGB(RGB_STRIP_PIXELS, RGB_STRIP_PIN, NEO_GRB + NEO_KHZ800);
+
 void initializeLEDController() {
+  // RGB
   stripRGB.begin();
-  for (uint8_t j = 0; j < NEOPIXEL_PIXELS; j++) {
+  for (uint8_t j = 0; j < RGB_STRIP_PIXELS; j++) {
     stripRGB.setPixelColor(j, 0, 0, 0);
   }
   stripRGB.show();
+  
+  // WHITE
+  ledcSetup(WHITE_STRIP_CHANNEL, WHITE_STRIP_PWM_FREQUENCY, WHITE_STRIP_PWM_RESOLUTION);
+  ledcAttachPin(WHITE_STRIP_PIN, WHITE_STRIP_CHANNEL);
+  
+  // FreeRTOS
   LEDControllerQueue = initializeQueue(LED_QUEUE_LENGTH, sizeof( struct LEDControllerCommand ) );
   LEDWorkerTaskSemaphore = initializeSemaphore();
 }
@@ -34,6 +43,14 @@ void LEDControllerTask(void *parameters) {
           break;
 
         case warmLightsON:
+          if (lastCommand.type != lightsOFF && lastCommand.type != warmLightsON) {
+            turnOffLights();
+          } 
+          for (uint8_t i = ANIMATION_LENGTH; i > 0; i--) {
+            uint8_t brightness = ( lastCommand.brightness * i + command.brightness * (ANIMATION_LENGTH - i) ) / ANIMATION_LENGTH;
+            ledcWrite(WHITE_STRIP_CHANNEL, brightness);
+            taskSleep(checkTime);
+          }
           break;
 
         case staticColor:
@@ -59,7 +76,7 @@ void LEDControllerTask(void *parameters) {
             newRed    = ( command.red1   * newPart +  oldRed    * oldPart ) / ANIMATION_LENGTH;
             newGreen  = ( command.green1 * newPart +  oldGreen  * oldPart ) / ANIMATION_LENGTH;
             newBlue   = ( command.blue1  * newPart +  oldBlue   * oldPart ) / ANIMATION_LENGTH;
-            for (uint8_t j = 0; j < NEOPIXEL_PIXELS; j++) {
+            for (uint8_t j = 0; j < RGB_STRIP_PIXELS; j++) {
               stripRGB.setPixelColor(j, newRed, newGreen, newBlue);
             }
             stripRGB.show();
@@ -89,13 +106,16 @@ void LEDControllerTask(void *parameters) {
 }
 
 void turnOffLights() {
+  uint8_t whiteLEDsBrightness = ledcRead(WHITE_STRIP_CHANNEL);
+  
   for (uint8_t i = ANIMATION_LENGTH; i > 0; i--) {
     stripRGB.setBrightness( (int) RGBBrightness * i / ANIMATION_LENGTH );
     stripRGB.show();
+    ledcWrite(WHITE_STRIP_CHANNEL, whiteLEDsBrightness * (i - 1) / ANIMATION_LENGTH);
     taskSleep(checkTime);
   }
   turnOffLEDWorker();
-  for (uint8_t i = 0; i < NEOPIXEL_PIXELS; i++) {
+  for (uint8_t i = 0; i < RGB_STRIP_PIXELS; i++) {
     stripRGB.setPixelColor(i, 0, 0, 0);
   }
   stripRGB.show();
@@ -141,7 +161,7 @@ void handleTwoColors(void *parameters) {
       newGreen  = floor(parameter_1 * command.green1  + parameter_2 * command.green2  );
       newBlue   = floor(parameter_1 * command.blue1   + parameter_2 * command.blue2   );
   
-      for (uint8_t i = 0; i < NEOPIXEL_PIXELS; i++) {
+      for (uint8_t i = 0; i < RGB_STRIP_PIXELS; i++) {
         stripRGB.setPixelColor(i, newRed, newGreen, newBlue);
       }
       stripRGB.show();

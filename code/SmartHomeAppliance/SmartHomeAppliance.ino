@@ -7,6 +7,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Adafruit_NeoPixel.h>
 
 #include <WiFi.h>
 #include <AsyncTCP.h>
@@ -55,12 +56,3 @@ struct LEDControllerCommand {
 
 #include "config.h"
 #include "secretConfig.h"
-
-
-
-
-
-#define NEOPIXEL_PIN 32
-#define NEOPIXEL_PIXELS 30
-#include <Adafruit_NeoPixel.h>
-Adafruit_NeoPixel stripRGB(NEOPIXEL_PIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);

@@ -45,12 +45,18 @@ IPAddress StationIPAddress;
 
 /* LED CONTROLLER */
 QueueHandle_t LEDControllerQueue;
-#define                       LED_QUEUE_LENGTH          16
-uint8_t                       RGBBrightness           = 255;
-#define                       ANIMATION_LENGTH          20
-int                           checkTime               = 1000 / FPS;
-TaskHandle_t                  LEDWorkerTaskHandle     = NULL;
-SemaphoreHandle_t             LEDWorkerTaskSemaphore  = NULL;
+#define                       RGB_STRIP_PIN               32
+#define                       RGB_STRIP_PIXELS            30
+uint8_t                       RGBBrightness             = 255;
+#define                       WHITE_STRIP_PIN             16
+#define                       WHITE_STRIP_CHANNEL         0
+#define                       WHITE_STRIP_PWM_RESOLUTION  8
+#define                       WHITE_STRIP_PWM_FREQUENCY   50000
+#define                       LED_QUEUE_LENGTH            16
+#define                       ANIMATION_LENGTH            20
+int                           checkTime                 = 1000 / FPS;
+TaskHandle_t                  LEDWorkerTaskHandle       = NULL;
+SemaphoreHandle_t             LEDWorkerTaskSemaphore    = NULL;
 struct LEDControllerCommand   globalLEDCommand;
 
 

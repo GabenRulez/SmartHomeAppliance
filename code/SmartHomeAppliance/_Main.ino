@@ -26,26 +26,20 @@ void setup() {
   startServer();
   startStationTask();
 
-  //ledcSetup(0, 50000, 8);
-  //ledcAttachPin(16, 0);
-  //ledcWrite(0, 100);
-
-
-  //stripRGB.setBrightness(16);
 
   /*
   for(int j=0; j<10000; j++){
     stripRGB.clear();
-    for(int i=0; i<NEOPIXEL_PIXELS; i++){
-      int hue = (65536 * ((i + j)%NEOPIXEL_PIXELS)) / NEOPIXEL_PIXELS;
+    for(int i=0; i<RGB_STRIP_PIXELS; i++){
+      int hue = (65536 * ((i + j)%RGB_STRIP_PIXELS)) / RGB_STRIP_PIXELS;
       //double saturation = 0.5;
       //double value = 0.5;
 
       
       
-      //int red = max(0.0, 255 * sin((TWO_PI * i / NEOPIXEL_PIXELS) + TWO_PI / 3));
-      //int green = max(0.0, 255 * sin((TWO_PI * i / NEOPIXEL_PIXELS)));
-      //int blue = max(0.0, 255 * sin((TWO_PI * i / NEOPIXEL_PIXELS) - TWO_PI / 3));
+      //int red = max(0.0, 255 * sin((TWO_PI * i / RGB_STRIP_PIXELS) + TWO_PI / 3));
+      //int green = max(0.0, 255 * sin((TWO_PI * i / RGB_STRIP_PIXELS)));
+      //int blue = max(0.0, 255 * sin((TWO_PI * i / RGB_STRIP_PIXELS) - TWO_PI / 3));
 
       
       //stripRGB.setPixelColor(i, red, green, blue);
@@ -58,14 +52,8 @@ void setup() {
   }*/
 
 
-
-
-
-
-
   initializeLEDController();
   startLEDControllerTask();
-
   
 }
 
