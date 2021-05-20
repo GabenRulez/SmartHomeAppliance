@@ -72,4 +72,5 @@ ___
 - [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO) - library to take care of `I^2C` communication
 - [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) - library to create asynchronous web server
 - [AsyncTCP](https://github.com/me-no-dev/AsyncTCP) - dependable for `ESPAsyncWebServer`
+- [Adafruit_NeoPixel](https://github.com/adafruit/Adafruit_NeoPixel) - to take care of addressable RGB LEDs
 

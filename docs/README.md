@@ -326,7 +326,9 @@ ___
 
 I added the newly created `twoColors` mode to the GUI.
 
-Then I went ahead and implemented `rainbow` mode (each RGB LED is in different color).
+Then I went ahead and implemented `rainbow` mode (each RGB LED is in different color). I also added GUI control to it.
+
+![](/media/photos/workLog/RainbowState.jpg)
 
 Everything went smoothly.
 
