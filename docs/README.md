@@ -320,7 +320,15 @@ I went on and cleaned up all the `PWM` code. I rewrote the server route, added p
 
 I tested everything and it works as intended.
 
+___
 
+#### 2021 05 20
+
+I added the newly created `twoColors` mode to the GUI.
+
+Then I went ahead and implemented `rainbow` mode (each RGB LED is in different color).
+
+Everything went smoothly.
 
 ___
 
