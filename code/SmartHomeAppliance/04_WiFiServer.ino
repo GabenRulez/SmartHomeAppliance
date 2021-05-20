@@ -68,6 +68,7 @@ void initializeModeSelectors() {
     request->send(403, "text/plain", "No 'red', 'green', 'blue' parameters");
   });
 
+
   server.on("/twoColors", HTTP_GET, [](AsyncWebServerRequest * request) {
     int red1, green1, blue1, red2, green2, blue2, animationIntervalMultiplier;
     if (request->hasParam("red1") && request->hasParam("green1") && request->hasParam("blue1") && request->hasParam("red2") && request->hasParam("green2") && request->hasParam("blue2") && request->hasParam("speed")){
@@ -77,7 +78,6 @@ void initializeModeSelectors() {
       red2    = normalizeBetween(  request->getParam("red2")->value().toInt()    , 0, 255);
       green2  = normalizeBetween(  request->getParam("green2")->value().toInt()  , 0, 255);
       blue2   = normalizeBetween(  request->getParam("blue2")->value().toInt()   , 0, 255);
-      // TODO zamienić skalę, bo SPEED = 1 -> przyspieszenie 128x, SPEED = 255 -> zwolnienie 2x
       animationIntervalMultiplier = normalizeBetween(  request->getParam("speed")->value().toInt() , 1, 255);
       
       request->send(200, "text/plain", "updated");
@@ -86,6 +86,22 @@ void initializeModeSelectors() {
     }
     request->send(403, "text/plain", "No 'red1', 'green1', 'blue1', 'red2', 'green2', 'blue2' parameters");
   });
+
+
+  server.on("/rainbow", HTTP_GET, [](AsyncWebServerRequest * request) {
+    uint8_t strength, animationSpeed;
+    if (request->hasParam("strength") && request->hasParam("speed")) {
+      strength        = normalizeBetween( request->getParam("strength")->value().toInt(),   0, 255);
+      animationSpeed  = normalizeBetween( request->getParam("speed")->value().toInt(),      0, 255);
+
+      LEDControllerCommand command = {rainbow, strength, animationSpeed};
+      sendLEDControllerCommand(command);
+
+      request->send(200, "text/plain", "updated");
+    }
+    request->send(403, "text/plain", "No 'strength' and 'speed' parameters");
+  });
+ 
 
 
 

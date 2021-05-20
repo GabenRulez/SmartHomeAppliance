@@ -96,6 +96,11 @@ void LEDControllerTask(void *parameters) {
           break;
 
         case rainbow:
+          if (lastCommand.type != lightsOFF) {
+            turnOffLights();
+          };
+          globalLEDCommand = command;
+          xTaskCreate( handleRainbow, "handleRainbow", 2000, (void*) NULL, 3, &LEDWorkerTaskHandle);
           break;
       }
       lastCommand = command;
@@ -138,8 +143,8 @@ void turnOffLEDWorker() {
 
 void handleTwoColors(void *parameters) {
   struct LEDControllerCommand command = globalLEDCommand;
-  float animationIntervalMultiplierMultiplier = 1.0 * command.animationIntervalMultiplier / 256;
-  uint16_t moddedAnimationLength = floor(32.0 * ANIMATION_LENGTH * animationIntervalMultiplierMultiplier);
+  float animationIntervalMultiplier = 1.0 * command.animationIntervalMultiplier / 256;
+  uint16_t moddedAnimationLength = floor(32.0 * ANIMATION_LENGTH * animationIntervalMultiplier);
   uint16_t j = 0;
   uint8_t iter = 0;
 
@@ -163,6 +168,37 @@ void handleTwoColors(void *parameters) {
   
       for (uint8_t i = 0; i < RGB_STRIP_PIXELS; i++) {
         stripRGB.setPixelColor(i, newRed, newGreen, newBlue);
+      }
+      stripRGB.show();
+
+      xSemaphoreGive(LEDWorkerTaskSemaphore);
+    }
+    vTaskDelayUntil( &updateTick, checkTime);
+  }
+  vTaskDelete(NULL);
+}
+
+void handleRainbow(void *parameters) {
+  struct LEDControllerCommand command = globalLEDCommand;
+  float animationIntervalMultiplier = 1.0 * command.animationIntervalMultiplier / 256;
+  uint16_t moddedAnimationLength = floor(32.0 * ANIMATION_LENGTH * animationIntervalMultiplier);
+  uint16_t j = 0;
+  uint8_t iter = 0;
+
+  portTickType updateTick = xTaskGetTickCount();
+  while (true) {
+    if(iter < ANIMATION_LENGTH){
+      iter++;
+      stripRGB.setBrightness( (int) RGBBrightness * iter / ANIMATION_LENGTH );
+    };
+    j = (j+1) % (moddedAnimationLength);
+    updateTick = xTaskGetTickCount();
+    if (xSemaphoreTake(LEDWorkerTaskSemaphore, (TickType_t) 10) == pdTRUE){
+
+    int hue = mapNumber(j, 0, moddedAnimationLength - 1, 0, 65535);
+      for (uint8_t i = 0; i < RGB_STRIP_PIXELS; i++) {
+        int tempHue = (hue + 65536 * i / RGB_STRIP_PIXELS)%65536;
+        stripRGB.setPixelColor(i, stripRGB.gamma32(stripRGB.ColorHSV(tempHue)));
       }
       stripRGB.show();
 

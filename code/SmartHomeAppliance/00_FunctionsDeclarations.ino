@@ -6,6 +6,7 @@ QueueHandle_t initializeQueue(int queueLength, int sizeOfCell);
 String stringIPAddress(IPAddress address);
 void taskSleep(int miliseconds);
 int normalizeBetween(int value, int from, int to);
+int mapNumber(int value, int valueFrom, int valueTo, int resultFrom, int resultTo);
 
 
 /* OLED SCREEN */
