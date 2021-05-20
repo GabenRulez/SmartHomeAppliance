@@ -114,7 +114,7 @@ void turnOffLights() {
   uint8_t whiteLEDsBrightness = ledcRead(WHITE_STRIP_CHANNEL);
   
   for (uint8_t i = ANIMATION_LENGTH; i > 0; i--) {
-    stripRGB.setBrightness( (int) RGBBrightness * i / ANIMATION_LENGTH );
+    stripRGB.setBrightness( (int) RGBCurrentBrightness * i / ANIMATION_LENGTH );
     stripRGB.show();
     ledcWrite(WHITE_STRIP_CHANNEL, whiteLEDsBrightness * (i - 1) / ANIMATION_LENGTH);
     taskSleep(checkTime);
@@ -124,7 +124,8 @@ void turnOffLights() {
     stripRGB.setPixelColor(i, 0, 0, 0);
   }
   stripRGB.show();
-  stripRGB.setBrightness(RGBBrightness);
+  stripRGB.setBrightness(RGBDefaultBrightness);
+  RGBCurrentBrightness = RGBDefaultBrightness;
 }
 
 
@@ -152,7 +153,7 @@ void handleTwoColors(void *parameters) {
   while (true) {
     if(iter < ANIMATION_LENGTH){
       iter++;
-      stripRGB.setBrightness( (int) RGBBrightness * iter / ANIMATION_LENGTH );
+      stripRGB.setBrightness( (int) RGBDefaultBrightness * iter / ANIMATION_LENGTH );
     };
     j = (j+1) % (moddedAnimationLength);
     updateTick = xTaskGetTickCount();
@@ -189,7 +190,9 @@ void handleRainbow(void *parameters) {
   while (true) {
     if(iter < ANIMATION_LENGTH){
       iter++;
-      stripRGB.setBrightness( (int) RGBBrightness * iter / ANIMATION_LENGTH );
+      int brightness = (int( command.brightness * iter / ANIMATION_LENGTH));
+      stripRGB.setBrightness( brightness );
+      RGBCurrentBrightness = brightness;
     };
     j = (j+1) % (moddedAnimationLength);
     updateTick = xTaskGetTickCount();

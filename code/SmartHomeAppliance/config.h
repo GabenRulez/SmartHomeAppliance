@@ -47,7 +47,8 @@ IPAddress StationIPAddress;
 QueueHandle_t LEDControllerQueue;
 #define                       RGB_STRIP_PIN               32
 #define                       RGB_STRIP_PIXELS            30
-uint8_t                       RGBBrightness             = 255;
+uint8_t                       RGBDefaultBrightness      = 255;
+uint8_t                       RGBCurrentBrightness      = 255;
 #define                       WHITE_STRIP_PIN             16
 #define                       WHITE_STRIP_CHANNEL         0
 #define                       WHITE_STRIP_PWM_RESOLUTION  8
