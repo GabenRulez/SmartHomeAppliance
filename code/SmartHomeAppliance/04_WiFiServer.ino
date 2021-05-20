@@ -102,14 +102,6 @@ void initializeModeSelectors() {
     request->send(403, "text/plain", "No 'strength' and 'speed' parameters");
   });
  
-
-
-
-
-
-
-
-
   
 
   server.on("/modeOFF", HTTP_GET, [](AsyncWebServerRequest * request) {

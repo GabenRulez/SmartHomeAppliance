@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.1/css/reinvented-color-wheel.min.css">
     <style>
         :root{
-            --options: 4;
+            --options: 5;
             --white: #FAF3DD;
             --black: #170F11;
             --light-grey: #5C6B73;
@@ -122,7 +122,7 @@
             box-shadow: inset 0 0 5000px var(--light-grey);
         }
 
-        #warmLightRange, #twoColorsSpeed{
+        #warmLightRange, #twoColorsSpeed, #rainbowSpeed, #rainbowStrength{
             width: 80%;
         }
 
@@ -148,6 +148,7 @@
         <div class="option warmLight">Warm Lights</div>
         <div class="option rgb">Static RGB Mode</div>
         <div class="option twoColors">Two color transition</div>
+        <div class="option rainbow">Rainbow</div>
     </div>
     <div id="container">
         <div class="option welcome active">
@@ -208,7 +209,7 @@
 
 
         <div class="option twoColors">
-            <h1>RGB Lights</h1>
+            <h1>Two color transition</h1>
             <div class="flex-row">
                 <div id="rgb1PickerContainer" class="flex-column rgbPicker">
                     <div class="redValue" style="display: none;">255</div>
@@ -238,6 +239,36 @@
                 <p>They help bring "the mood" to the room.</p>
             </div>
         </div>
+
+        <div class="option rainbow">
+            <h1>Rainbow</h1>
+            <div class="flex-column" id="rainbowStrengthContainer" style="width: 80%">
+                <h2>Brightness</h2>
+                <input name="warmLightRange" id="rainbowStrength" type="range" min="0" max="255" value="128" autocomplete="off" oninput="this.parentNode.querySelector('h2.realResult').innerHTML = this.value; this.parentNode.querySelector('h2.result').innerHTML = Math.floor(100 * this.value/255) + '%'">
+                <h2 class="result">50%</h2>
+                <h2 class="realResult">128</h2>
+            </div>
+            <div class="flex-column" id="rainbowSpeedContainer" style="width: 80%">
+                <h2>Speed</h2>
+                <input name="twoColorsSpeed" id="rainbowSpeed" type="range" min="1" max="250" value="127" autocomplete="off" oninput="this.parentNode.querySelector('h2.realResult').innerHTML = 256 - this.value; this.parentNode.querySelector('h2.result').innerHTML = (formatNumber(128 / (256 - this.value), 2)) + 'x' ">
+                <h2 class="result">1.00x</h2>
+                <h2 class="realResult">127</h2>
+            </div>
+
+            <div class="flex-row">
+                <div class="button" data-value="rainbow">Turn rainbow loop mode ON</div>
+                <div class="button" data-value="modeOFF">Turn OFF</div>
+            </div>
+            <div class="line"></div>
+            <div class="flex-column">
+                <p>This mode turns on the 5V addressable RGB LEDs.</p>
+                <p>It then uses looped animation. The colors are basically spinning.</p>
+                <p>Gives you an extra 1fps in games.</p>
+            </div>
+        </div>
+
+
+
     </div>
 
 
@@ -321,6 +352,9 @@
                         const parentObject1 = document.getElementById('rgb1PickerContainer');
                         const parentObject2 = document.getElementById('rgb2PickerContainer');
                         request.open('GET', "http://" + serverIP + "/twoColors?red1=" + parentObject1.querySelector('.redValue').innerHTML + "&green1=" + parentObject1.querySelector('.greenValue').innerHTML + "&blue1=" + parentObject1.querySelector('.blueValue').innerHTML + "&red2=" + parentObject2.querySelector('.redValue').innerHTML + "&green2=" + parentObject2.querySelector('.greenValue').innerHTML + "&blue2=" + parentObject2.querySelector('.blueValue').innerHTML + "&speed=" + document.querySelector('#twoColorsSpeedContainer').querySelector('.realResult').innerText)
+                        break;
+                    case "rainbow":
+                        request.open('GET', "http://" + serverIP + "/rainbow?strength=" + document.querySelector('#rainbowStrength').value + "&speed=" + document.querySelector('#rainbowSpeedContainer').querySelector('.realResult').innerText)
                         break;
                     case "modeOFF":
                     default:
