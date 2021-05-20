@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.1/css/reinvented-color-wheel.min.css">
     <style>
         :root{
-            --options: 3;
+            --options: 4;
             --white: #FAF3DD;
             --black: #170F11;
             --light-grey: #5C6B73;
@@ -122,12 +122,22 @@
             box-shadow: inset 0 0 5000px var(--light-grey);
         }
 
-        #warmLightRange{
+        #warmLightRange, #twoColorsSpeed{
             width: 80%;
         }
 
         .reinvented-color-wheel div, canvas{
             transition: 0s;
+        }
+
+        .realResult{
+            display: none;
+        }
+
+        @media screen and (max-width: 550px){
+            .flex-row{
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -137,6 +147,7 @@
         <div class="option welcome active">Home screen</div>
         <div class="option warmLight">Warm Lights</div>
         <div class="option rgb">Static RGB Mode</div>
+        <div class="option twoColors">Two color transition</div>
     </div>
     <div id="container">
         <div class="option welcome active">
@@ -159,8 +170,10 @@
         <div class="option warmLight">
             <h1>Warm Lights</h1>
             <div class="flex-column" style="width: 80%">
-                <input name="warmLightRange" id="warmLightRange" type="range" min="0" max="255" value="127" autocomplete="off" oninput="this.parentNode.querySelector('h2').innerHTML = this.value;">
-                <h2 class="result">127</h2>
+                <h2>Brightness</h2>
+                <input name="warmLightRange" id="warmLightRange" type="range" min="0" max="255" value="128" autocomplete="off" oninput="this.parentNode.querySelector('h2.realResult').innerHTML = this.value; this.parentNode.querySelector('h2.result').innerHTML = Math.floor(100 * this.value/255) + '%'">
+                <h2 class="result">50%</h2>
+                <h2 class="realResult">128</h2>
             </div>
             <div class="flex-row">
                 <div class="button" data-value="warmLights">Turn "Warm Lights" mode ON</div>
@@ -177,12 +190,11 @@
 
         <div class="option rgb">
             <h1>RGB Lights</h1>
-            <div id="rgbPickerContainer" class="flex-column">
-
+            <div id="rgbPickerContainer" class="flex-column rgbPicker">
+                <div class="redValue" style="display: none;">255</div>
+                <div class="greenValue" style="display: none;">0</div>
+                <div class="blueValue" style="display: none;">0</div>
             </div>
-            <div id="redValue" style="display: none;">255</div>
-            <div id="greenValue" style="display: none;">0</div>
-            <div id="blueValue" style="display: none;">0</div>
             <div class="flex-row">
                 <div class="button" data-value="RGBLights">Turn "RGB Lights" mode ON</div>
                 <div class="button" data-value="modeOFF">Turn OFF</div>
@@ -190,6 +202,39 @@
             <div class="line"></div>
             <div class="flex-column">
                 <p>This mode turns on the 5V addressable RGB LEDs.</p>
+                <p>They help bring "the mood" to the room.</p>
+            </div>
+        </div>
+
+
+        <div class="option twoColors">
+            <h1>RGB Lights</h1>
+            <div class="flex-row">
+                <div id="rgb1PickerContainer" class="flex-column rgbPicker">
+                    <div class="redValue" style="display: none;">255</div>
+                    <div class="greenValue" style="display: none;">0</div>
+                    <div class="blueValue" style="display: none;">0</div>
+                </div>
+                <div id="rgb2PickerContainer" class="flex-column rgbPicker">
+                    <div class="redValue" style="display: none;">255</div>
+                    <div class="greenValue" style="display: none;">0</div>
+                    <div class="blueValue" style="display: none;">0</div>
+                </div>
+            </div>
+            <div class="flex-column" id="twoColorsSpeedContainer" style="width: 80%">
+                <h2>Speed</h2>
+                <input name="twoColorsSpeed" id="twoColorsSpeed" type="range" min="1" max="255" value="127" autocomplete="off" oninput="this.parentNode.querySelector('h2.realResult').innerHTML = 256 - this.value; this.parentNode.querySelector('h2.result').innerHTML = (formatNumber(128 / (256 - this.value), 2)) + 'x' ">
+                <h2 class="result">1.00x</h2>
+                <h2 class="realResult">127</h2>
+            </div>
+            <div class="flex-row">
+                <div class="button" data-value="twoColors">Turn two color smooth transition mode ON</div>
+                <div class="button" data-value="modeOFF">Turn OFF</div>
+            </div>
+            <div class="line"></div>
+            <div class="flex-column">
+                <p>This mode turns on the 5V addressable RGB LEDs.</p>
+                <p>It then proceeds to smoothly transition between the two.</p>
                 <p>They help bring "the mood" to the room.</p>
             </div>
         </div>
@@ -269,7 +314,13 @@
                         request.open('GET', "http://" + serverIP + "/warmLights?strength=" + document.getElementById('warmLightRange').value, true);
                         break;
                     case "RGBLights":
-                        request.open('GET', "http://" + serverIP + "/RGBLights?red=" + document.getElementById('redValue').innerHTML + "&green=" + document.getElementById('greenValue').innerHTML + "&blue=" + document.getElementById('blueValue').innerHTML, true);
+                        const parentObject = document.getElementById('rgbPickerContainer');
+                        request.open('GET', "http://" + serverIP + "/RGBLights?red=" + parentObject.querySelector('.redValue').innerHTML + "&green=" + parentObject.querySelector('.greenValue').innerHTML + "&blue=" + parentObject.querySelector('.blueValue').innerHTML, true);
+                        break;
+                    case "twoColors":
+                        const parentObject1 = document.getElementById('rgb1PickerContainer');
+                        const parentObject2 = document.getElementById('rgb2PickerContainer');
+                        request.open('GET', "http://" + serverIP + "/twoColors?red1=" + parentObject1.querySelector('.redValue').innerHTML + "&green1=" + parentObject1.querySelector('.greenValue').innerHTML + "&blue1=" + parentObject1.querySelector('.blueValue').innerHTML + "&red2=" + parentObject2.querySelector('.redValue').innerHTML + "&green2=" + parentObject2.querySelector('.greenValue').innerHTML + "&blue2=" + parentObject2.querySelector('.blueValue').innerHTML + "&speed=" + document.querySelector('#twoColorsSpeedContainer').querySelector('.realResult').innerText)
                         break;
                     case "modeOFF":
                     default:
@@ -287,9 +338,17 @@
                 request.send(null);
             })
         }
+        function formatNumber(number, digitsAfter){
+            if(digitsAfter === undefined) digitsAfter = 1;
+            let biggerNumber = Math.floor(number * (10 ** digitsAfter));
+            let tempString = String(biggerNumber);
+            for(let i=0; i<Math.log10(1.0/number); i++) tempString = "0" + tempString;
+            return [tempString.slice(0, tempString.length - digitsAfter), tempString.slice(tempString.length - digitsAfter)].join('.');
+        }
     </script>
     <script type="module">
         import ReinventedColorWheel from "https://cdn.jsdelivr.net/npm/reinvented-color-wheel@0.3.1/es/reinvented-color-wheel.bundle.min.js";
+        /*
         const redValueObject = document.getElementById('redValue');
         const greenValueObject = document.getElementById('greenValue');
         const blueValueObject = document.getElementById('blueValue');
@@ -305,7 +364,21 @@
                 greenValueObject.innerHTML = color.rgb[1];
                 blueValueObject.innerHTML = color.rgb[2];
             },
-        });
+        });*/
+
+
+        for(let picker of document.getElementsByClassName('rgbPicker')){
+            const colorWheel = new ReinventedColorWheel({
+                appendTo: picker,
+                hsv: [0, 100, 100],
+                wheelReflectsSaturation: true,
+                onChange: function (color) {
+                    picker.querySelector('.redValue').innerHTML = color.rgb[0];
+                    picker.querySelector('.greenValue').innerHTML = color.rgb[1];
+                    picker.querySelector('.blueValue').innerHTML = color.rgb[2];
+                },
+            });
+        };
     </script>
 </body>
 </html>

@@ -23,7 +23,7 @@ enum programMode {
 
 struct ProgramConfig {
   programMode currentMode;
-  uint8_t warmLightsStrength;   // MAX = 100
+  uint8_t warmLightsStrength;   // MAX = 255
   uint8_t RGBLightsRed;         // MAX = 255
   uint8_t RGBLightsGreen;       // MAX = 255
   uint8_t RGBLightsBlue;        // MAX = 255
