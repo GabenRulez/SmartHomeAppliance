@@ -107,16 +107,16 @@ void screenManagerTask(void *parameters) {
 
 
                 case staticRGBColorSettings:
-                  ledControllerCommand = {staticColor, 0, 0, 137, 49, 104};
+                  ledControllerCommand = {staticColor, 0, 0, 177, 27, 165};
                   sendLEDControllerCommand(ledControllerCommand);
 
-                  screenControllerCommand = {staticRGBColor, 0, 137, 49, 104};
+                  screenControllerCommand = {staticRGBColor, 0, 177, 27, 165};
                   sendScreenControllerCommand(screenControllerCommand);
                   break;
 
 
                 case twoColorsRGBSettings:
-                  ledControllerCommand = {twoColors, 0, 127, 137, 49, 104, 52, 229, 255};
+                  ledControllerCommand = {twoColors, 0, 127, 177, 27, 165, 52, 229, 255};
                   sendLEDControllerCommand(ledControllerCommand);
 
                   screenControllerCommand = {twoColorsRGB};
