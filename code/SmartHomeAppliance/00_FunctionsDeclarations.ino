@@ -14,7 +14,15 @@ void initializeScreen();
 void initializeDisplay();
 void startScreenManagerTask();
 void sendScreenControllerCommand(ScreenControllerCommand command);
+void displayDefaultFrame(float multiplier);
 void screenManagerTask(void *parameters);
+void displayMainMenu();
+void displayWarmLights();
+void displayStaticRGB();
+void displayTransitionRGB();
+void displayRainbowMode();
+void displayIPAddress();
+
 
 
 /* ROTARY ENCODER */

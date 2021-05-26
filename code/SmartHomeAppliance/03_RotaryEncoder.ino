@@ -74,14 +74,11 @@ void rotaryEncoderButtonTask( void * parameters ) {
       newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
     }
     if (newState != oldState) {
-      
-      oldState = newState;
-      
       if(!oldState){
         RotaryEncoderInputCommand command = {buttonPress};
         sendRotaryEncoderInputCommand(command);
       }
-      
+      oldState = newState;
     }
     vTaskDelayUntil( &pollingUpdateTick, frameTime);
   }

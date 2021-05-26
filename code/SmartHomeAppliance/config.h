@@ -20,6 +20,7 @@
 int displayCore             = 0;            // Overwritten later. It's the core, on which the I^2C communication will take place on (it's also the core, the Arduino IDE starts on).
 #define SCREEN_QUEUE_LENGTH   3
 QueueHandle_t                 screenControllerQueue;
+#define SCREEN_COMMAND_COUNT  6
 
 
 /*  ROTARY ENCODER  */

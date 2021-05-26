@@ -28,8 +28,8 @@ enum ScreenControllerCommandType {
   warmLights = 1,
   staticRGBColor = 2,
   twoColorsRGB = 3,
-  rainbowMode = 5,
-  showIPAddress = 99
+  rainbowMode = 4,
+  showIPAddress = 5
 };
 
 struct ScreenControllerCommand {
