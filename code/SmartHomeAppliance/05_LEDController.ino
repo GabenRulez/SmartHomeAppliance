@@ -1,25 +1,25 @@
 Adafruit_NeoPixel stripRGB(RGB_STRIP_PIXELS, RGB_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
+
 void initializeLEDController() {
-  // RGB
   stripRGB.begin();
   for (uint8_t j = 0; j < RGB_STRIP_PIXELS; j++) {
     stripRGB.setPixelColor(j, 0, 0, 0);
   }
   stripRGB.show();
-  
-  // WHITE
+
   ledcSetup(WHITE_STRIP_CHANNEL, WHITE_STRIP_PWM_FREQUENCY, WHITE_STRIP_PWM_RESOLUTION);
   ledcAttachPin(WHITE_STRIP_PIN, WHITE_STRIP_CHANNEL);
-  
-  // FreeRTOS
+
   LEDControllerQueue = initializeQueue(LED_QUEUE_LENGTH, sizeof( struct LEDControllerCommand ) );
   LEDWorkerTaskSemaphore = initializeSemaphore();
 }
 
+
 void startLEDControllerTask() {
   xTaskCreate( LEDControllerTask, "LEDControllerTask", 1000, (void*) NULL, 3, NULL );
 }
+
 
 void sendLEDControllerCommand(LEDControllerCommand command) {
   xQueueSend( LEDControllerQueue, &command, ( TickType_t ) 0 );
@@ -28,7 +28,7 @@ void sendLEDControllerCommand(LEDControllerCommand command) {
 
 void LEDControllerTask(void *parameters) {
   portTickType updateTick = xTaskGetTickCount();
-  struct LEDControllerCommand lastCommand = {staticColor};
+  struct LEDControllerCommand lastCommand = {lightsOFF};
   struct LEDControllerCommand command;
   LEDWorkerTaskHandle = NULL;
 
@@ -43,9 +43,8 @@ void LEDControllerTask(void *parameters) {
           break;
 
         case warmLightsON:
-          if (lastCommand.type != lightsOFF && lastCommand.type != warmLightsON) {
-            turnOffLights();
-          } 
+          if (lastCommand.type != lightsOFF && lastCommand.type != warmLightsON) turnOffLights();
+          if (lastCommand.type == rainbow) lastCommand.brightness = 0;
           for (uint8_t i = ANIMATION_LENGTH; i > 0; i--) {
             uint8_t brightness = ( lastCommand.brightness * i + command.brightness * (ANIMATION_LENGTH - i) ) / ANIMATION_LENGTH;
             ledcWrite(WHITE_STRIP_CHANNEL, brightness);
@@ -107,9 +106,10 @@ void LEDControllerTask(void *parameters) {
   vTaskDelete(NULL);
 }
 
+
 void turnOffLights() {
   uint8_t whiteLEDsBrightness = ledcRead(WHITE_STRIP_CHANNEL);
-  
+
   for (uint8_t i = ANIMATION_LENGTH; i > 0; i--) {
     stripRGB.setBrightness( (int) RGBCurrentBrightness * i / ANIMATION_LENGTH );
     stripRGB.show();
@@ -137,8 +137,6 @@ void turnOffLEDWorker() {
 }
 
 
-
-
 void handleTwoColors(void *parameters) {
   struct LEDControllerCommand command = globalLEDCommand;
   float animationIntervalMultiplier = 1.0 * command.animationIntervalMultiplier / 256;
@@ -148,22 +146,22 @@ void handleTwoColors(void *parameters) {
 
   portTickType updateTick = xTaskGetTickCount();
   while (true) {
-    if(iter < ANIMATION_LENGTH){
+    if (iter < ANIMATION_LENGTH) {
       iter++;
       stripRGB.setBrightness( (int) RGBDefaultBrightness * iter / ANIMATION_LENGTH );
     };
-    j = (j+1) % (moddedAnimationLength);
+    j = (j + 1) % (moddedAnimationLength);
     updateTick = xTaskGetTickCount();
-    if (xSemaphoreTake(LEDWorkerTaskSemaphore, (TickType_t) 10) == pdTRUE){
+    if (xSemaphoreTake(LEDWorkerTaskSemaphore, (TickType_t) 10) == pdTRUE) {
 
       float parameter_1 = 0.5 + sin(TWO_PI * (float)j  / (moddedAnimationLength)) / 2.0;
       float parameter_2 = 1.0 - parameter_1;
-  
+
       uint8_t newRed, newGreen, newBlue;
       newRed    = floor(parameter_1 * command.red1    + parameter_2 * command.red2    );
       newGreen  = floor(parameter_1 * command.green1  + parameter_2 * command.green2  );
       newBlue   = floor(parameter_1 * command.blue1   + parameter_2 * command.blue2   );
-  
+
       for (uint8_t i = 0; i < RGB_STRIP_PIXELS; i++) {
         stripRGB.setPixelColor(i, newRed, newGreen, newBlue);
       }
@@ -176,6 +174,7 @@ void handleTwoColors(void *parameters) {
   vTaskDelete(NULL);
 }
 
+
 void handleRainbow(void *parameters) {
   struct LEDControllerCommand command = globalLEDCommand;
   float animationIntervalMultiplier = 1.0 * command.animationIntervalMultiplier / 256;
@@ -185,19 +184,19 @@ void handleRainbow(void *parameters) {
 
   portTickType updateTick = xTaskGetTickCount();
   while (true) {
-    if(iter < ANIMATION_LENGTH){
+    if (iter < ANIMATION_LENGTH) {
       iter++;
       int brightness = (int( command.brightness * iter / ANIMATION_LENGTH));
       stripRGB.setBrightness( brightness );
       RGBCurrentBrightness = brightness;
     };
-    j = (j+1) % (moddedAnimationLength);
+    j = (j + 1) % (moddedAnimationLength);
     updateTick = xTaskGetTickCount();
-    if (xSemaphoreTake(LEDWorkerTaskSemaphore, (TickType_t) 10) == pdTRUE){
+    if (xSemaphoreTake(LEDWorkerTaskSemaphore, (TickType_t) 10) == pdTRUE) {
 
-    int hue = mapNumber(j, 0, moddedAnimationLength - 1, 0, 65535);
+      int hue = mapNumber(j, 0, moddedAnimationLength - 1, 0, 65535);
       for (uint8_t i = 0; i < RGB_STRIP_PIXELS; i++) {
-        int tempHue = (hue + 65536 * i / RGB_STRIP_PIXELS)%65536;
+        int tempHue = (hue + 65536 * i / RGB_STRIP_PIXELS) % 65536;
         stripRGB.setPixelColor(i, stripRGB.gamma32(stripRGB.ColorHSV(tempHue)));
       }
       stripRGB.show();

@@ -60,6 +60,4 @@ struct LEDControllerCommand   globalLEDCommand;
 QueueHandle_t                 LEDControllerQueue;
 
 
-
-
 #endif

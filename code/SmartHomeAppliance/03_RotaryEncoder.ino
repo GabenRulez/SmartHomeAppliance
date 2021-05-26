@@ -39,14 +39,14 @@ void rotaryEncoderDebouncedHandler(void *pinBState) {
   portMUX_TYPE mutexStop = portMUX_INITIALIZER_UNLOCKED;
   taskENTER_CRITICAL(&mutexStop); // It's here to stop this task from being deleted, while sending command to queue.
 
-    if ((int)pinBState == LOW) {
-      RotaryEncoderInputCommand command = {right};
-      sendRotaryEncoderInputCommand(command);
-    }
-    else { 
-      RotaryEncoderInputCommand command = {left};
-      sendRotaryEncoderInputCommand(command);
-    }
+  if ((int)pinBState == LOW) {
+    RotaryEncoderInputCommand command = {right};
+    sendRotaryEncoderInputCommand(command);
+  }
+  else {
+    RotaryEncoderInputCommand command = {left};
+    sendRotaryEncoderInputCommand(command);
+  }
 
   taskEXIT_CRITICAL(&mutexStop);
 
@@ -74,7 +74,7 @@ void rotaryEncoderButtonTask( void * parameters ) {
       newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
     }
     if (newState != oldState) {
-      if(!oldState){
+      if (!oldState) {
         RotaryEncoderInputCommand command = {buttonPress};
         sendRotaryEncoderInputCommand(command);
       }

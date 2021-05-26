@@ -1,11 +1,12 @@
 AsyncWebServer server(SERVER_PORT);
 
+
 void initializeAccessPoint() {
   WiFi.mode(WIFI_MODE_APSTA);
   WiFi.softAP(AP_SSID, AP_PASSWORD);
   AccessPointIPAddress = WiFi.softAPIP();
-  Serial.print("AP IP address: ");
-  Serial.println(AccessPointIPAddress);
+  //Serial.print("AP IP address: ");
+  //Serial.println(AccessPointIPAddress);
 }
 
 
@@ -25,15 +26,15 @@ void initializeMainPage() {
 
 void initializeModeSelectors() {
   server.on("/warmLights", HTTP_GET, [](AsyncWebServerRequest * request) {
-    if (request->hasParam("strength")){
+    if (request->hasParam("strength")) {
       uint8_t requestedStrength = normalizeBetween( request->getParam("strength")->value().toInt(), 0, 255);
-      
+
       LEDControllerCommand ledControllerCommand = {warmLightsON, requestedStrength};
       sendLEDControllerCommand(ledControllerCommand);
 
       ScreenControllerCommand screenControllerCommand = {warmLights, requestedStrength};
       sendScreenControllerCommand(screenControllerCommand);
-      
+
       request->send(200, "text/plain", "updated");
     }
     request->send(403, "text/plain", "No 'strength' parameter");
@@ -61,7 +62,7 @@ void initializeModeSelectors() {
 
   server.on("/twoColors", HTTP_GET, [](AsyncWebServerRequest * request) {
     int red1, green1, blue1, red2, green2, blue2, animationIntervalMultiplier;
-    if (request->hasParam("red1") && request->hasParam("green1") && request->hasParam("blue1") && request->hasParam("red2") && request->hasParam("green2") && request->hasParam("blue2") && request->hasParam("speed")){
+    if (request->hasParam("red1") && request->hasParam("green1") && request->hasParam("blue1") && request->hasParam("red2") && request->hasParam("green2") && request->hasParam("blue2") && request->hasParam("speed")) {
       red1    = normalizeBetween(  request->getParam("red1")->value().toInt()    , 0, 255);
       green1  = normalizeBetween(  request->getParam("green1")->value().toInt()  , 0, 255);
       blue1   = normalizeBetween(  request->getParam("blue1")->value().toInt()   , 0, 255);
@@ -69,13 +70,13 @@ void initializeModeSelectors() {
       green2  = normalizeBetween(  request->getParam("green2")->value().toInt()  , 0, 255);
       blue2   = normalizeBetween(  request->getParam("blue2")->value().toInt()   , 0, 255);
       animationIntervalMultiplier = normalizeBetween(  request->getParam("speed")->value().toInt() , 1, 255);
-      
+
       LEDControllerCommand ledControllerCommand = {twoColors, 0, animationIntervalMultiplier, red1, green1, blue1, red2, green2, blue2};
       sendLEDControllerCommand(ledControllerCommand);
 
       ScreenControllerCommand screenControllerCommand = {twoColorsRGB};
       sendScreenControllerCommand(screenControllerCommand);
-      
+
       request->send(200, "text/plain", "updated");
     }
     request->send(403, "text/plain", "No 'red1', 'green1', 'blue1', 'red2', 'green2', 'blue2' parameters");
@@ -98,8 +99,7 @@ void initializeModeSelectors() {
     }
     request->send(403, "text/plain", "No 'strength' and 'speed' parameters");
   });
- 
-  
+
 
   server.on("/modeOFF", HTTP_GET, [](AsyncWebServerRequest * request) {
 
@@ -116,17 +116,16 @@ void initializeModeSelectors() {
 
 void startServer() {
   // TODO delete line below when going into production
-  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  //DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
 
   server.begin();
 }
 
 
-
-
 void startStationTask() {
   xTaskCreate( stationTask, "stationTask", 3000, (void*) NULL, 1, NULL);
 }
+
 
 void stationTask(void * parameters) {
   startStation();
@@ -140,7 +139,7 @@ void startStation() {
   WiFi.begin(ST_SSID, ST_PASSWORD);
   int reconnectionsLeft = RECONNECTION_MAX_COUNT;
   while (reconnectionsLeft > 0 && (WiFi.status() != WL_CONNECTED)) {
-    Serial.println("Connecting to <" + String(ST_SSID) + "> Status: " + String(WiFi.status()));
+    //Serial.println("Connecting to <" + String(ST_SSID) + "> Status: " + String(WiFi.status()));
     if (WiFi.status() == WL_DISCONNECTED) {
       WiFi.reconnect();
       vTaskDelay(RECONNECTION_TIMEOUT);
@@ -149,8 +148,8 @@ void startStation() {
     reconnectionsLeft--;
   }
   StationIPAddress = WiFi.localIP();
-  if (WiFi.status() == WL_CONNECTED) Serial.println("Successfully connected to <" + String(ST_SSID) + ">. Local IP address: " + stringIPAddress(StationIPAddress));
-  else Serial.println("Couldn't connect to <" + String(ST_SSID) + ">");
+  //if (WiFi.status() == WL_CONNECTED) Serial.println("Successfully connected to <" + String(ST_SSID) + ">. Local IP address: " + stringIPAddress(StationIPAddress));
+  //else Serial.println("Couldn't connect to <" + String(ST_SSID) + ">");
 }
 
 

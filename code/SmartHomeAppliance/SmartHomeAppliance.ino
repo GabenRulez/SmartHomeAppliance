@@ -8,10 +8,10 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_NeoPixel.h>
-
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+
 
 enum RotaryEncoderInputCommandType {
   buttonPress = 0,
@@ -19,9 +19,11 @@ enum RotaryEncoderInputCommandType {
   right = 2
 };
 
+
 struct RotaryEncoderInputCommand {
   RotaryEncoderInputCommandType type;
 };
+
 
 enum ScreenControllerCommandType {
   mainMenu = 0,
@@ -38,6 +40,7 @@ enum ScreenControllerCommandType {
   rainbowModeSettings = 10
 };
 
+
 struct ScreenControllerCommand {
   ScreenControllerCommandType type;
   uint8_t brightness;
@@ -45,6 +48,7 @@ struct ScreenControllerCommand {
   uint8_t green;
   uint8_t blue;
 };
+
 
 enum LEDControllerCommandType {
   lightsOFF = 0,
@@ -54,9 +58,10 @@ enum LEDControllerCommandType {
   rainbow = 5
 };
 
+
 struct LEDControllerCommand {
   LEDControllerCommandType type;
-  uint8_t brightness; 
+  uint8_t brightness;
   uint8_t animationIntervalMultiplier;
   uint8_t red1;
   uint8_t green1;

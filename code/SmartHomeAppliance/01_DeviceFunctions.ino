@@ -33,20 +33,20 @@ String stringIPAddress(IPAddress address) {
 }
 
 
-void taskSleep(int miliseconds){
+void taskSleep(int miliseconds) {
   vTaskDelay( miliseconds / portTICK_PERIOD_MS);
 }
 
 
-int normalizeBetween(int value, int from, int to){
-  if(to > from){
-    if(value < from) value = from;
-    else if(value > to) value = to;
+int normalizeBetween(int value, int from, int to) {
+  if (to > from) {
+    if (value < from) value = from;
+    else if (value > to) value = to;
   }
   return value;
 }
 
 
-int mapNumber(int value, int valueFrom, int valueTo, int resultFrom, int resultTo){
+int mapNumber(int value, int valueFrom, int valueTo, int resultFrom, int resultTo) {
   return (value - valueFrom) * (resultTo - resultFrom) / (valueTo - valueFrom) + resultFrom;
 }
