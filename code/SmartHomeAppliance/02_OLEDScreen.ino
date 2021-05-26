@@ -54,15 +54,18 @@ void screenManagerTask(void *parameters) {
   while (true) {
     screenUpdateTick = xTaskGetTickCount();
 
+    ScreenControllerCommand screenControllerCommand;
+    LEDControllerCommand ledControllerCommand;
     
     while ( xQueueReceive( rotaryEncoderInputQueue, &rotaryEncoderInputCommand, (TickType_t) 0)) {
       switch(depth){
         case 0:
-          ScreenControllerCommand screenControllerCommand;
           switch(rotaryEncoderInputCommand.type){
             case buttonPress:
               displayDefaultFrame(1.5);
               display.display();
+              screenControllerCommand = {(ScreenControllerCommandType)((currentMode + SCREEN_COMMAND_COUNT) % (2 * SCREEN_COMMAND_COUNT))};
+              sendScreenControllerCommand(screenControllerCommand);
               break;
               
             case left:
@@ -76,8 +79,68 @@ void screenManagerTask(void *parameters) {
               break;
           }
           break;
+
+        case 1:
+          switch(rotaryEncoderInputCommand.type){
+            case buttonPress:
+            
+              switch(currentMode){
+                case mainMenuSettings:
+                  ledControllerCommand = {lightsOFF};
+                  sendLEDControllerCommand(ledControllerCommand);
+              
+                  screenControllerCommand = {mainMenu};
+                  sendScreenControllerCommand(screenControllerCommand);
+                  break;
+                
+                case warmLightsSettings:
+                  ledControllerCommand = {warmLightsON, 127};
+                  sendLEDControllerCommand(ledControllerCommand);
+
+                  screenControllerCommand = {warmLights, 127};
+                  sendScreenControllerCommand(screenControllerCommand);
+                  break;
+
+
+                case staticRGBColorSettings:
+                  ledControllerCommand = {staticColor, 0, 0, 137, 49, 104};
+                  sendLEDControllerCommand(ledControllerCommand);
+            
+                  screenControllerCommand = {staticRGBColor, 0, 137, 49, 104};
+                  sendScreenControllerCommand(screenControllerCommand);
+                  break;
+
+      
+                case twoColorsRGBSettings:
+                  ledControllerCommand = {twoColors, 0, 127, 137, 49, 104, 52, 229, 255};
+                  sendLEDControllerCommand(ledControllerCommand);
+            
+                  screenControllerCommand = {twoColorsRGB};
+                  sendScreenControllerCommand(screenControllerCommand);
+                  break;
+
+      
+                case rainbowModeSettings:
+                  ledControllerCommand = {rainbow, 127, 127};
+                  sendLEDControllerCommand(ledControllerCommand);
+            
+                  screenControllerCommand = {rainbowMode};
+                  sendScreenControllerCommand(screenControllerCommand);
+                  break;
+                    
+                default:
+                  break;
+              
+              }
+              break;
+            default:
+              break;
+          }
+          break;
+
           
         default:
+          depth = 0;
           break;
       }
     };
@@ -130,6 +193,39 @@ void screenManagerTask(void *parameters) {
             depth = 0;
             displayDefaultFrame(1);
             displayIPAddress();
+            break;
+
+          case mainMenuSettings:
+            display.clearDisplay();
+            depth = 1;
+            displayMainMenuSettings();
+            break;
+
+          case warmLightsSettings:
+            display.clearDisplay();
+            depth = 1;
+            displayWarmLightsSettings();
+            break;
+
+          case staticRGBColorSettings:
+            display.clearDisplay();
+            depth = 1;
+            displayStaticRGBColorSettings();
+            break;
+
+          case twoColorsRGBSettings:
+            display.clearDisplay();
+            depth = 1;
+            displayTwoColorsRGBSettings();
+            break;
+
+          case rainbowModeSettings:
+            display.clearDisplay();
+            depth = 1;
+            displayRainbowModeSettings();
+            break;
+          
+          default:
             break;
         }
         display.display();
@@ -187,6 +283,53 @@ void displayIPAddress(){
   display.setCursor(2,16);
   display.println("AP: " + stringIPAddress(AccessPointIPAddress));
 }
+
+void displayDefaultSettings(){
+  display.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, WHITE);
+}
+
+void displayMainMenuSettings(){
+  displayDefaultSettings();
+  display.setCursor(5, 5);
+  display.println("Turn OFF");
+  display.setCursor(5, 15);
+  display.println("all the lights");
+}
+
+void displayWarmLightsSettings(){
+  displayDefaultSettings();
+  display.setCursor(5, 5);
+  display.println("Turn ON");
+  display.setCursor(5, 15);
+  display.println("with 50% brightness");
+}
+
+void displayStaticRGBColorSettings(){
+  displayDefaultSettings();
+  display.setCursor(5, 5);
+  display.println("Turn ON RGB LEDs");
+  display.setCursor(5, 15);
+  display.println("with Pink color");
+}
+
+void displayTwoColorsRGBSettings(){
+  displayDefaultSettings();
+  display.setCursor(5, 3);
+  display.println("Turn ON RGB LEDs");
+  display.setCursor(5, 12);
+  display.println("to oscillate between");
+  display.setCursor(5, 21);
+  display.println("Pink and Blue");
+}
+
+void displayRainbowModeSettings(){
+  displayDefaultSettings();
+  display.setCursor(5, 3);
+  display.println("Turn ON");
+  display.setCursor(5, 12);
+  display.println("the 'rainbow' mode");
+}
+
 
 
 /*

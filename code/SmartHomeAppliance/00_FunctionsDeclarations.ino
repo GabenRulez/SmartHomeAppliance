@@ -22,7 +22,11 @@ void displayStaticRGB();
 void displayTransitionRGB();
 void displayRainbowMode();
 void displayIPAddress();
-
+void displayDefaultSettings();
+void displayWarmLightsSettings();
+void displayStaticRGBColorSettings();
+void displayTwoColorsRGBSettings();
+void displayRainbowModeSettings();
 
 
 /* ROTARY ENCODER */

@@ -29,7 +29,13 @@ enum ScreenControllerCommandType {
   staticRGBColor = 2,
   twoColorsRGB = 3,
   rainbowMode = 4,
-  showIPAddress = 5
+  showIPAddress = 5,
+
+  mainMenuSettings = 6,
+  warmLightsSettings = 7,
+  staticRGBColorSettings = 8,
+  twoColorsRGBSettings = 9,
+  rainbowModeSettings = 10
 };
 
 struct ScreenControllerCommand {

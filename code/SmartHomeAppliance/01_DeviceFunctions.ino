@@ -46,6 +46,7 @@ int normalizeBetween(int value, int from, int to){
   return value;
 }
 
+
 int mapNumber(int value, int valueFrom, int valueTo, int resultFrom, int resultTo){
   return (value - valueFrom) * (resultTo - resultFrom) / (valueTo - valueFrom) + resultFrom;
 }
