@@ -13,6 +13,7 @@ int mapNumber(int value, int valueFrom, int valueTo, int resultFrom, int resultT
 void initializeScreen();
 void initializeDisplay();
 void startScreenManagerTask();
+void sendScreenControllerCommand(ScreenControllerCommand command);
 void screenManagerTask(void *parameters);
 
 
@@ -24,6 +25,7 @@ void rotaryEncoderInterruptInISR(void *pvParameter1, uint32_t ulParameter2);
 void rotaryEncoderDebouncedHandler(void *pinBState);
 void startRotaryEncoderButtonTask();
 void rotaryEncoderButtonTask( void * parameters );
+void sendRotaryEncoderInputCommand(RotaryEncoderInputCommand command);
 
 
 /* WIFI SERVER + STATION */

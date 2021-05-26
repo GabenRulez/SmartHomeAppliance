@@ -23,6 +23,7 @@ void initializeMainPage() {
 }
 
 
+
 void initializeModeSelectors() {
   server.on("/warmLights", HTTP_GET, [](AsyncWebServerRequest * request) {
     if (request->hasParam("strength")){
@@ -35,9 +36,11 @@ void initializeModeSelectors() {
         request->send(200, "text/plain", "updated");
       }
 
-      LEDControllerCommand command = {warmLightsON, requestedStrength};
-      sendLEDControllerCommand(command);
-      
+      LEDControllerCommand ledControllerCommand = {warmLightsON, requestedStrength};
+      sendLEDControllerCommand(ledControllerCommand);
+
+      ScreenControllerCommand screenControllerCommand = {warmLights};
+      sendScreenControllerCommand(screenControllerCommand);
     }
     request->send(403, "text/plain", "No 'strength' parameter");
   });
@@ -50,8 +53,11 @@ void initializeModeSelectors() {
       green   = normalizeBetween( request->getParam("green")->value().toInt(),  0, 255);
       blue    = normalizeBetween( request->getParam("blue")->value().toInt(),   0, 255);
 
-      LEDControllerCommand command = {staticColor, 0, 0, red, green, blue};
-      sendLEDControllerCommand(command);
+      LEDControllerCommand ledControllerCommand = {staticColor, 0, 0, red, green, blue};
+      sendLEDControllerCommand(ledControllerCommand);
+
+      ScreenControllerCommand screenControllerCommand = {staticRGBColor};
+      sendScreenControllerCommand(screenControllerCommand);
 
       if (xSemaphoreTake(programConfigSemaphore, (TickType_t) 1000) == pdTRUE) {
 
@@ -80,8 +86,11 @@ void initializeModeSelectors() {
       animationIntervalMultiplier = normalizeBetween(  request->getParam("speed")->value().toInt() , 1, 255);
       
       request->send(200, "text/plain", "updated");
-      LEDControllerCommand command = {twoColors, 0, animationIntervalMultiplier, red1, green1, blue1, red2, green2, blue2};
-      sendLEDControllerCommand(command);
+      LEDControllerCommand ledControllerCommand = {twoColors, 0, animationIntervalMultiplier, red1, green1, blue1, red2, green2, blue2};
+      sendLEDControllerCommand(ledControllerCommand);
+
+      ScreenControllerCommand screenControllerCommand = {twoColorsRGB};
+      sendScreenControllerCommand(screenControllerCommand);
     }
     request->send(403, "text/plain", "No 'red1', 'green1', 'blue1', 'red2', 'green2', 'blue2' parameters");
   });
@@ -93,8 +102,11 @@ void initializeModeSelectors() {
       strength        = normalizeBetween( request->getParam("strength")->value().toInt(),   0, 255);
       animationSpeed  = normalizeBetween( request->getParam("speed")->value().toInt(),      0, 255);
 
-      LEDControllerCommand command = {rainbow, strength, animationSpeed};
-      sendLEDControllerCommand(command);
+      LEDControllerCommand ledControllerCommand = {rainbow, strength, animationSpeed};
+      sendLEDControllerCommand(ledControllerCommand);
+
+      ScreenControllerCommand screenControllerCommand = {rainbowMode};
+      sendScreenControllerCommand(screenControllerCommand);
 
       request->send(200, "text/plain", "updated");
     }
@@ -109,8 +121,11 @@ void initializeModeSelectors() {
       xSemaphoreGive(programConfigSemaphore);
       request->send(200, "text/plain", "updated");
 
-      LEDControllerCommand command = {lightsOFF};
-      sendLEDControllerCommand(command);
+      LEDControllerCommand ledControllerCommand = {lightsOFF};
+      sendLEDControllerCommand(ledControllerCommand);
+
+      ScreenControllerCommand screenControllerCommand = {mainMenu};
+      sendScreenControllerCommand(screenControllerCommand);
     }
   });
 }

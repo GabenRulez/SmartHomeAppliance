@@ -41,11 +41,11 @@ void rotaryEncoderDebouncedHandler(void *pinBState) {
 
     if ((int)pinBState == LOW) {
       RotaryEncoderInputCommand command = {right};
-      xQueueSend( rotaryEncoderInputQueue, &command, ( TickType_t ) 0 );
+      sendRotaryEncoderInputCommand(command);
     }
     else { 
       RotaryEncoderInputCommand command = {left};
-      xQueueSend( rotaryEncoderInputQueue, &command, ( TickType_t ) 0 );
+      sendRotaryEncoderInputCommand(command);
     }
 
   taskEXIT_CRITICAL(&mutexStop);
@@ -79,11 +79,16 @@ void rotaryEncoderButtonTask( void * parameters ) {
       
       if(!oldState){
         RotaryEncoderInputCommand command = {buttonPress};
-        xQueueSend( rotaryEncoderInputQueue, &command, ( TickType_t ) 0 );
+        sendRotaryEncoderInputCommand(command);
       }
       
     }
     vTaskDelayUntil( &pollingUpdateTick, frameTime);
   }
   vTaskDelete(NULL);
+}
+
+
+void sendRotaryEncoderInputCommand(RotaryEncoderInputCommand command) {
+  xQueueSend( rotaryEncoderInputQueue, &command, ( TickType_t ) 0 );
 }

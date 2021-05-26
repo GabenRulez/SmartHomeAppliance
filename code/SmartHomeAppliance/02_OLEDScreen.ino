@@ -20,6 +20,10 @@ void startScreenManagerTask() {
   xTaskCreatePinnedToCore( screenManagerTask, "screenManagerTask", 3000, (void*) NULL, 2, NULL, displayCore );
 }
 
+void sendScreenControllerCommand(ScreenControllerCommand command) {
+  xQueueSend( screenControllerQueue, &command, ( TickType_t ) 0 );
+}
+
 void displayWelcomeFrame() {
   display.clearDisplay();
   display.setCursor(0, 0);
@@ -47,6 +51,7 @@ void screenManagerTask(void *parameters) {
 
 
   RotaryEncoderInputCommand rotaryEncoderInputCommand;
+  ScreenControllerCommand screenControllerCommand;
   uint8_t counter = 0;
 
   while (true) {
@@ -71,7 +76,34 @@ void screenManagerTask(void *parameters) {
         }
         display.print("Counter: " + String(counter));
         display.display();
-    }
+    };
+
+    if ( xQueueReceive( screenControllerQueue, &screenControllerCommand, (TickType_t) 0)) {
+        Serial.println("Got screenControllerCommand: " + String(screenControllerCommand.type));
+        display.clearDisplay();
+        display.setCursor(0,0);
+        switch(screenControllerCommand.type){
+          case mainMenu:
+            display.println("mainMenu");
+            break;
+          case warmLights:
+            display.println("warmLights");
+            break;
+          case staticRGBColor:
+            display.println("staticRGBColor");
+            break;
+          case twoColorsRGB:
+            display.println("twoColorsRGB");
+            break;
+          case rainbowMode:
+            display.println("rainbowMode");
+            break;
+          case showIPAddress:
+            display.println("showIPAddress");
+            break;
+        }
+        display.display();
+    };
 
     
     vTaskDelayUntil( &screenUpdateTick, frameTime);
