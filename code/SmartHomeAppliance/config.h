@@ -4,8 +4,6 @@
 /* DEVICE */
 #define AVAILABLE_CORES   ESP.getChipCores()
 #define DISCONNECTED_PIN  32
-SemaphoreHandle_t   programConfigSemaphore            = NULL;
-struct ProgramConfig programConfig = {modeOFF, 50, 0, 0, 0};
 
 
 

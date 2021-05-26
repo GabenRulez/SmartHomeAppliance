@@ -13,22 +13,6 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
-/* PROGRAM MODES */
-enum programMode {
-  modeOFF = 0,
-  modeWarmLights = 1,
-  modeRGBLights = 2,
-  showIP = 99
-};
-
-struct ProgramConfig {
-  programMode currentMode;
-  uint8_t warmLightsStrength;   // MAX = 255
-  uint8_t RGBLightsRed;         // MAX = 255
-  uint8_t RGBLightsGreen;       // MAX = 255
-  uint8_t RGBLightsBlue;        // MAX = 255
-};
-
 enum RotaryEncoderInputCommandType {
   buttonPress = 0,
   left = 1,

@@ -47,7 +47,6 @@ void displayWiFiStatus(){
 void screenManagerTask(void *parameters) {
   portTickType screenUpdateTick = xTaskGetTickCount();
   int frameTime = 1000 / FPS;
-  ProgramConfig localProgramConfig;
 
 
   RotaryEncoderInputCommand rotaryEncoderInputCommand;
@@ -106,55 +105,6 @@ void screenManagerTask(void *parameters) {
     };
 
     
-    vTaskDelayUntil( &screenUpdateTick, frameTime);
-  }
-
-
-
-
-
-
-  
-
-  while (true) {
-    
-
-    
-    if (xSemaphoreTake(programConfigSemaphore, (TickType_t) frameTime) == pdTRUE) {
-      localProgramConfig = programConfig;
-      xSemaphoreGive(programConfigSemaphore);
-    }
-
-
-    if (localProgramConfig.currentMode == modeOFF) {
-
-    } else if (localProgramConfig.currentMode == modeWarmLights) {
-      display.clearDisplay();
-      display.setCursor(2, 2);
-      display.println("modeWarmLights");
-      display.print("strength: ");
-      display.print(localProgramConfig.warmLightsStrength);
-      display.display();
-
-    } else if (localProgramConfig.currentMode == modeRGBLights) {
-      display.clearDisplay();
-      display.setCursor(2, 2);
-      display.println("modeRGBLights");
-      display.println("color (rgb): ");
-      display.print("(");
-      display.print(localProgramConfig.RGBLightsRed);
-      display.print(", ");
-      display.print(localProgramConfig.RGBLightsGreen);
-      display.print(", ");
-      display.print(localProgramConfig.RGBLightsBlue);
-      display.print(")");
-      display.display();
-    } else {
-      //display.clearDisplay();
-      //display.display();
-      displayDefaultFrame();
-    }
-
     vTaskDelayUntil( &screenUpdateTick, frameTime);
   }
   vTaskDelete(NULL);

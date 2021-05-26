@@ -1,7 +1,6 @@
 void setup() {
   Serial.begin(115200);
   initializeRandomSeed();
-  initializeProgramModes();
 
   initializeScreen();
   initializeDisplay();
