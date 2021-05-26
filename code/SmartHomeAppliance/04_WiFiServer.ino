@@ -18,8 +18,7 @@ void initializeAliveMessages() {
 
 void initializeMainPage() {
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
-    Serial.println(request->url() + " -- " + request->host());
-    request->send(200, "text/html", "<!DOCTYPE HTML><body>hejj</body>");
+    request->send(200, "text/html", HTML);
   });
 }
 
