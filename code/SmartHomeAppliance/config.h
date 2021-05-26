@@ -10,29 +10,29 @@ struct ProgramConfig programConfig = {modeOFF, 50, 0, 0, 0};
 
 
 /*  OLED SCREEN   */
-#define Display_SCL_Pin   22            // IO22
-#define Display_SDA_Pin   21            // IO21
-#define SCREEN_WIDTH      128           // OLED display width, in pixels
-#define SCREEN_HEIGHT     32            // OLED display height, in pixels
-#define OLED_RESET        4             // Reset pin
-#define SCREEN_ADDRESS    0x3C          //< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
-#define WHITE             SSD1306_WHITE
-#define BLACK             SSD1306_BLACK
-#define FPS               60
-int displayCore         = 0;            // Overwritten later. It's the core, on which the I^2C communication will take place on (it's also the core, the Arduino IDE starts on).
-QueueHandle_t screenQueue;
+#define Display_SCL_Pin       22            // IO22
+#define Display_SDA_Pin       21            // IO21
+#define SCREEN_WIDTH          128           // OLED display width, in pixels
+#define SCREEN_HEIGHT         32            // OLED display height, in pixels
+#define OLED_RESET            4             // Reset pin
+#define SCREEN_ADDRESS        0x3C          //< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
+#define WHITE                 SSD1306_WHITE
+#define BLACK                 SSD1306_BLACK
+#define FPS                   60
+int displayCore             = 0;            // Overwritten later. It's the core, on which the I^2C communication will take place on (it's also the core, the Arduino IDE starts on).
+#define SCREEN_QUEUE_LENGTH   3
+QueueHandle_t                 screenControllerQueue;
 
 
 /*  ROTARY ENCODER  */
-#define ROTARY_ENCODER_PIN_A                          18
-#define ROTARY_ENCODER_PIN_B                          5
-#define ROTARY_ENCODER_BUTTON_PIN                     19
-#define ROTARY_ENCODER_BUTTON_POLLING_RATE            60
-TaskHandle_t      rotaryEncoderInterruptTaskHandle  = NULL;
-const int         rotaryEncoderDebounceTime         = 33;
-int               rotaryEncoderValue                = 0;
-boolean           rotaryEncoderButtonPressed        = false;
-SemaphoreHandle_t rotaryEncoderSemaphore            = NULL;
+#define             ROTARY_ENCODER_PIN_A                          18
+#define             ROTARY_ENCODER_PIN_B                          5
+#define             ROTARY_ENCODER_BUTTON_PIN                     19
+#define             ROTARY_ENCODER_BUTTON_POLLING_RATE            60
+TaskHandle_t        rotaryEncoderInterruptTaskHandle            = NULL;
+const int           rotaryEncoderDebounceTime                   = 33;
+#define             ROTARY_ENCODER_INPUT_QUEUE_LENGTH             8
+QueueHandle_t       rotaryEncoderInputQueue;
 
 
 /* WIFI SERVER + STATION */
@@ -44,7 +44,6 @@ IPAddress StationIPAddress;
 
 
 /* LED CONTROLLER */
-QueueHandle_t LEDControllerQueue;
 #define                       RGB_STRIP_PIN               32
 #define                       RGB_STRIP_PIXELS            30
 uint8_t                       RGBDefaultBrightness      = 255;
@@ -59,6 +58,7 @@ int                           checkTime                 = 1000 / FPS;
 TaskHandle_t                  LEDWorkerTaskHandle       = NULL;
 SemaphoreHandle_t             LEDWorkerTaskSemaphore    = NULL;
 struct LEDControllerCommand   globalLEDCommand;
+QueueHandle_t                 LEDControllerQueue;
 
 
 

@@ -2,7 +2,7 @@ void initializeRotaryEncoder() {
   pinMode(ROTARY_ENCODER_BUTTON_PIN,  INPUT_PULLDOWN);
   pinMode(ROTARY_ENCODER_PIN_A,       INPUT_PULLDOWN);
   pinMode(ROTARY_ENCODER_PIN_B,       INPUT_PULLDOWN);
-  rotaryEncoderSemaphore = initializeSemaphore();
+  rotaryEncoderInputQueue = initializeQueue(ROTARY_ENCODER_INPUT_QUEUE_LENGTH, sizeof( struct RotaryEncoderInputCommand ) );
 }
 
 
@@ -37,13 +37,16 @@ void rotaryEncoderDebouncedHandler(void *pinBState) {
   vTaskDelay(rotaryEncoderDebounceTime);
 
   portMUX_TYPE mutexStop = portMUX_INITIALIZER_UNLOCKED;
-  taskENTER_CRITICAL(&mutexStop); // It's here to stop this task from being deleted, while the other semaphore is taken.
+  taskENTER_CRITICAL(&mutexStop); // It's here to stop this task from being deleted, while sending command to queue.
 
-  if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE) {
-    if ((int)pinBState == LOW) rotaryEncoderValue++;
-    else rotaryEncoderValue--;
-    xSemaphoreGive(rotaryEncoderSemaphore);
-  }
+    if ((int)pinBState == LOW) {
+      RotaryEncoderInputCommand command = {right};
+      xQueueSend( rotaryEncoderInputQueue, &command, ( TickType_t ) 0 );
+    }
+    else { 
+      RotaryEncoderInputCommand command = {left};
+      xQueueSend( rotaryEncoderInputQueue, &command, ( TickType_t ) 0 );
+    }
 
   taskEXIT_CRITICAL(&mutexStop);
 
@@ -64,11 +67,6 @@ void rotaryEncoderButtonTask( void * parameters ) {
   boolean oldState = false;
   boolean newState;
 
-  if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE) {
-    oldState = rotaryEncoderButtonPressed;
-    xSemaphoreGive(rotaryEncoderSemaphore);
-  }
-
   while (true) {
     newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
     if (newState == HIGH && oldState == false) {
@@ -76,11 +74,14 @@ void rotaryEncoderButtonTask( void * parameters ) {
       newState = (digitalRead(ROTARY_ENCODER_BUTTON_PIN) == HIGH);
     }
     if (newState != oldState) {
-      if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE) {
-        rotaryEncoderButtonPressed = newState;
-        xSemaphoreGive(rotaryEncoderSemaphore);
-        oldState = newState;
+      
+      oldState = newState;
+      
+      if(!oldState){
+        RotaryEncoderInputCommand command = {buttonPress};
+        xQueueSend( rotaryEncoderInputQueue, &command, ( TickType_t ) 0 );
       }
+      
     }
     vTaskDelayUntil( &pollingUpdateTick, frameTime);
   }

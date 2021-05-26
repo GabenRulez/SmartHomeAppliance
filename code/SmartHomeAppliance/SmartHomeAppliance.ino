@@ -29,12 +29,38 @@ struct ProgramConfig {
   uint8_t RGBLightsBlue;        // MAX = 255
 };
 
+enum RotaryEncoderInputCommandType {
+  buttonPress = 0,
+  left = 1,
+  right = 2
+};
+
+struct RotaryEncoderInputCommand {
+  RotaryEncoderInputCommandType type;
+};
+
+enum ScreenControllerCommandType {
+  mainMenu = 0,
+  warmLights = 1,
+  staticRGBColor = 2,
+  twoColorsRGB = 3,
+  rainbowMode = 5,
+  showIPAddress = 99
+};
+
+struct ScreenControllerCommand {
+  ScreenControllerCommandType type;
+  uint8_t brightness;
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+};
+
 enum LEDControllerCommandType {
   lightsOFF = 0,
   warmLightsON = 1,
   staticColor = 2,
   twoColors = 3,
-  threeColors = 4,
   rainbow = 5
 };
 

@@ -7,20 +7,36 @@ void initializeScreen() {
 
 
 void initializeDisplay() {
-  display.setTextColor(SSD1306_WHITE);
+  display.setTextColor(WHITE);
   display.setTextSize(1);
-  display.setTextWrap(5);
+  display.setTextWrap(1);
   display.clearDisplay();
-  display.setCursor(0, 0);
-  display.println("# Embedded  Systems #\n# ---- Project ---- #");
-  display.display();
-  delay(2000);
+  screenControllerQueue = initializeQueue(SCREEN_QUEUE_LENGTH, sizeof( struct ScreenControllerCommand ) );
   /*display.cp437(true);*/
 }
 
 
 void startScreenManagerTask() {
-  xTaskCreatePinnedToCore( screenManagerTask, "screenManagerTask", 1000, (void*) NULL, 2, NULL, displayCore );
+  xTaskCreatePinnedToCore( screenManagerTask, "screenManagerTask", 3000, (void*) NULL, 2, NULL, displayCore );
+}
+
+void displayWelcomeFrame() {
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.println("# Embedded  Systems #\n# ---- Project ---- #");
+  display.display();
+}
+
+void displayDefaultFrame(){
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.drawFastHLine(0,0,10, WHITE);
+  display.drawFastVLine(0,0,10, WHITE);
+  display.display();
+}
+
+void displayWiFiStatus(){
+  display.clearDisplay();
 }
 
 
@@ -28,6 +44,45 @@ void screenManagerTask(void *parameters) {
   portTickType screenUpdateTick = xTaskGetTickCount();
   int frameTime = 1000 / FPS;
   ProgramConfig localProgramConfig;
+
+
+  RotaryEncoderInputCommand rotaryEncoderInputCommand;
+  uint8_t counter = 0;
+
+  while (true) {
+    screenUpdateTick = xTaskGetTickCount();
+
+    
+    if ( xQueueReceive( rotaryEncoderInputQueue, &rotaryEncoderInputCommand, (TickType_t) 0)) {
+        Serial.println("Got rotaryEncoderInputCommand: " + String(rotaryEncoderInputCommand.type));
+        display.clearDisplay();
+        display.setCursor(0,0);
+        counter++;
+        switch(rotaryEncoderInputCommand.type){
+          case buttonPress:
+            display.println("ButtonPressed");
+            break;
+          case left:
+            display.println("Left");
+            break;
+          case right:
+            display.println("Right");
+            break;
+        }
+        display.print("Counter: " + String(counter));
+        display.display();
+    }
+
+    
+    vTaskDelayUntil( &screenUpdateTick, frameTime);
+  }
+
+
+
+
+
+
+  
 
   while (true) {
     
@@ -40,16 +95,6 @@ void screenManagerTask(void *parameters) {
 
 
     if (localProgramConfig.currentMode == modeOFF) {
-      if (xSemaphoreTake(rotaryEncoderSemaphore, (TickType_t) 1000) == pdTRUE) {
-        int gotValue = rotaryEncoderValue;
-        boolean buttonPressed = rotaryEncoderButtonPressed;
-        xSemaphoreGive(rotaryEncoderSemaphore);
-        display.clearDisplay();
-        display.setCursor(0, 0);
-        display.println(gotValue);
-        if (buttonPressed) display.fillCircle(display.width() / 2, display.height() / 2, 4, WHITE);
-        display.display();
-      }
 
     } else if (localProgramConfig.currentMode == modeWarmLights) {
       display.clearDisplay();
@@ -73,8 +118,9 @@ void screenManagerTask(void *parameters) {
       display.print(")");
       display.display();
     } else {
-      display.clearDisplay();
-      display.display();
+      //display.clearDisplay();
+      //display.display();
+      displayDefaultFrame();
     }
 
     vTaskDelayUntil( &screenUpdateTick, frameTime);

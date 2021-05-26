@@ -92,9 +92,6 @@ void LEDControllerTask(void *parameters) {
           xTaskCreate( handleTwoColors, "handleTwoColors", 2000, (void*) NULL, 3, &LEDWorkerTaskHandle);
           break;
 
-        case threeColors:
-          break;
-
         case rainbow:
           if (lastCommand.type != lightsOFF) {
             turnOffLights();
