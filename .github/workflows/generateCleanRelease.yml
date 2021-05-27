@@ -11,10 +11,10 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date + '%Y-%m-$d')"
 
-      - name: Checkout branch "master"
+      - name: Checkout branch "main"
         uses: actions/checkout@v2
         with:
-          ref: 'master'
+          ref: 'main'
           
       - name: Creates libraries backup
         run: |
