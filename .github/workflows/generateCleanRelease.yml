@@ -20,7 +20,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/code/SmartHomeAppliance/libraries
           zip -r librariesBackup.zip ./*
-          cp librariesBackup.zip ../../..
+          cp librariesBackup.zip ../../../..
           
       - name: Filters unwanted files
         run: |
@@ -44,4 +44,4 @@ jobs:
           tag_name: ${{ steps.date.outputs.date }}
           files: |
             cleanBackup.zip
-            librariesBackup.zip
+            ../librariesBackup.zip
