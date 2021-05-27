@@ -1,0 +1,46 @@
+name: Generate Clean Release
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: CleanRelease
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date + '%Y-%m-$d')"
+
+      - name: Checkout branch "master"
+        uses: actions/checkout@v2
+        with:
+          ref: 'master'
+          
+      - name: Creates libraries backup
+        run: |
+          cd ${{ github.workspace }}/code/SmartHomeAppliance/libraries
+          zip -r librariesBackup.zip ./*
+          
+      - name: Filters unwanted files
+        run: |
+          cd ${{ github.workspace }}
+          rm -r media
+          rm -r docs
+          rm -r README.md
+          rm -r code/GetChipID
+          rm -r code/DisplayDemo_ssd1306_128x32_i2c
+          
+      - name: Creates clean package
+        run: |
+          cd ${{ github.workspace }}
+          zip -r cleanBackup.zip ./*
+
+      - name: Realease a snapshot
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.date.outputs.date }}
+          files: |
+            cleanBackup.zip
+            librariesBackup.zip
