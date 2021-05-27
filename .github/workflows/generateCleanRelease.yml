@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-$d')"
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 
       - name: Checkout branch "main"
         uses: actions/checkout@v2
@@ -20,6 +20,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/code/SmartHomeAppliance/libraries
           zip -r librariesBackup.zip ./*
+          cp librariesBackup.zip ../../..
           
       - name: Filters unwanted files
         run: |
