@@ -30,6 +30,7 @@ jobs:
           rm -r README.md
           rm -r code/GetChipID
           rm -r code/DisplayDemo_ssd1306_128x32_i2c
+          rm -r code/SmartHomeAppliance/libraries
           
       - name: Creates clean package
         run: |
