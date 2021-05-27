@@ -334,4 +334,40 @@ Everything went smoothly.
 
 ___
 
+#### 2021 05 26
+
+As tomorrow is the final deadline for this project, I cleared up my schedule and focused solely on finishing it.
+
+First I minified the HTML website, that will be serving from ESP32 Web Server. I then added it as `PROGMEM` to Arduino IDE.
+
+
+
+Then I reworked the communication between the rotary encoder and the screen. I created few `enum`s, few `queue`s.
+Now rotary encoder adds `RotaryEncoderInputCommand`s into its queue. The screen task checks, whether something showed up on the queue and then acts accordingly.
+
+Screen now doesn't use `ProgramMode`, instead it has its own queue with `ScreenControllerCommand`s.
+
+
+
+I made server send commands not only to `LEDController`, but now to `ScreenController` too.
+
+
+
+I created a menu for the OLED display, with each "page" having its own little function, that is recalled from the screen task. I also implemented "changing" the modes within the screen task -> pressing once shows the description -> pressing twice on the certain page sends commands to both `ScreenController` task queue as well as `LEDController` queue.
+
+Here's some photos of the display control working:
+![](/media/photos/workLog/screenFinal_1.jpg)
+![](/media/photos/workLog/screenFinal_2.jpg)
+![](/media/photos/workLog/screenFinal_3.jpg)
+![](/media/photos/workLog/screenFinal_4.jpg)
+![](/media/photos/workLog/screenFinal_5.jpg)
+![](/media/photos/workLog/screenFinal_6.jpg)
+![](/media/photos/workLog/screenFinal_7.jpg)
+
+
+
+As everything seemed to be working correctly I cleaned up the code and fixed little bugs and made some light optimisations.
+
+___
+
 <div id="bottom"></div>
