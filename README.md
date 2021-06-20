@@ -13,9 +13,12 @@ ___
  - It lights up not only with warm-white LEDs, but also RGB ones. 
  - It can be controlled either through rotary encoder and OLED display on the front of the device, or from HTTP requests sent through WiFi.
  - It has multiple lighting modes, some with addressable mechanic.
- - Data from light sensor will be used to brighten/darken/turn off the lamp.
+ - Data from light sensor will be used to brighten/darken/turn off the lamp. (WIP)
  - Easily powered through 5V DC by USB-C port (every phone charger).
- - ###### Maybe: Bluetooth speaker + LEDs controlled by playing music.
+ - ###### Maybe: Bluetooth speaker + LEDs controlled by playing music. (WIP)
+
+### Schematic (WIP)
+![](/media/schematics/2021-06-11_full/schematic.png)
 
 ### Used parts:
  - ESP32 board ([ESP32-DevKitC V4](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html))
@@ -26,21 +29,21 @@ ___
 ![](/media/photos/LEDstripB_01.jpg)
  - 0.91 inch I^2C white OLED module with a resolution of 128x32
 ![](/media/photos/OLED_01.jpg)
- - Light sensor module with LM393 and photoresistor
-![](/media/photos/LightSensor_01.jpg)
  - EC11 5-pin Rotary encoder
 ![](/media/photos/RotaryEncoder_01.jpg)
  - MT3608 Step-Up-Boost-Converter
 ![](/media/photos/StepUp_01.jpg)
- - Simple switch
-![](/media/photos/Switch_01.jpg)
- - 6-pin USB-C port
-![](/media/photos/USB-C_01.jpg)
  - some capacitors
 ![](/media/photos/CapacitorA_01.jpg)
  - IRF 840 N-MOSFET
-  ![](/media/photos/NMosfet.jpg)
+![](/media/photos/NMosfet.jpg)
 
+ - Light sensor module with LM393 and photoresistor (WIP)
+![](/media/photos/LightSensor_01.jpg)
+ - Simple switch (WIP)
+![](/media/photos/Switch_01.jpg)
+ - 6-pin USB-C port (WIP)
+![](/media/photos/USB-C_01.jpg)
 ___
 
 ### Drivers
