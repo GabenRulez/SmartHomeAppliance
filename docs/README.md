@@ -374,20 +374,24 @@ ___
 
 I finally got a chance to go back to my old house (where I have some tools) so I could finally get to create enclosure for the lamp.
 
-I gathered the required parts.
+I gathered the required parts:
 ![](/media/photos/workLog/lampSteps1.jpg)
 
-Attaching the USB-C port to this base turned out to be impossible without a 3D printer (the wavy base was very fragile making drilling the hole in it ipossible), thus I decided to just connect long USB cable through it.
+Attaching the USB-C port to this base turned out to be impossible without a 3D printer (the wavy base was very fragile making drilling the hole in it impossible), thus I decided to just connect long USB cable through it.
+
 ![](/media/photos/workLog/lampSteps2.jpg)
 
-I got myself a metal base for the LEDs (it was an unused [Daidai](https://www.ikea.com/pl/pl/p/daidai-oslonka-doniczki-kolor-mosiadzu-90359419/) plant holder that was just laying around). I chose it over plastic shaker, due to it's better heat dissipation.
+I got myself a metal base for the LEDs (it was an unused [Daidai](https://www.ikea.com/pl/pl/p/daidai-oslonka-doniczki-kolor-mosiadzu-90359419/) plant holder that was just laying around). I chose it over plastic drink shaker cup, due to it's better heat dissipation (metal > plastic).
 
-I glued the LED strips to it using tape (that was already preapplied to the strips) and added some glue with hot glue gun. The strips couldn't attach perfectly, due to the plant holder curvature, but I deemed it "good enough".
+I glued the LED strips to it using tape (that was already preapplied to the strips) and added some glue with hot glue gun. The strips couldn't attach perfectly due to the plant holder curvature, but I deemed it "good enough".
+
 ![](/media/photos/workLog/lampSteps3.jpg)
 
 
 I decided to recreate the circuit schematic as my old one got lost somewhere in the process.
-I used [Circuit-Diagram.org](https://www.circuit-diagram.org) (link to my schematic is [here](https://crcit.net/c/fa2ed9ef81f7484d955e504ce4f56466) ).
+I used [Circuit-Diagram.org](https://www.circuit-diagram.org) although I probably won't ever use it again (while moving circuit nodes the wires doesn't follow and there's no testing functionality).
+
+(link to my schematic is [here](https://crcit.net/c/fa2ed9ef81f7484d955e504ce4f56466) ).
 
 Final result: ![](/media/schematics/2021-06-11_full/schematic.png)
 
@@ -396,7 +400,6 @@ I started soldering the bottom-right part of this schematic (warm white LEDs dri
 
 I also drilled the holes in the top part of lamp enclosure for screen and rotary encoder.
 
-Unfortunately I didn't have any more time.
 ___
 
 <div id="bottom"></div>
